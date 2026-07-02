@@ -10,7 +10,6 @@
     href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap"
     rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --ink: #132524;
@@ -176,16 +175,6 @@
 
     .btn-add:hover {
       background: var(--teal-deep);
-    }
-
-    .btn-whatsapp {
-      background: #25D366;
-      color: #fff !important;
-      box-shadow: 0 6px 18px -8px rgba(37, 211, 102, .7);
-    }
-
-    .btn-whatsapp:hover {
-      background: #128C7E;
     }
 
     .btn-del {
@@ -668,30 +657,24 @@
       border: 1px solid transparent;
       transition: background 0.15s ease, transform 0.1s ease;
     }
-
     .btn-sm:active {
       transform: translateY(1px);
     }
-
     .btn-sm-edit {
       background: var(--gold);
       color: var(--teal-deep);
     }
-
     .btn-sm-edit:hover {
       background: #e3b25f;
     }
-
     .btn-sm-del {
       background: var(--bad-bg);
       color: var(--bad);
       border-color: #f0c9bb;
     }
-
     .btn-sm-del:hover {
       background: #f8ded5;
     }
-
     .bottom-actions {
       display: flex;
       justify-content: flex-end;
@@ -701,7 +684,6 @@
       margin-bottom: 24px;
       flex-wrap: wrap;
     }
-
     .status-text {
       font-family: var(--font-mono);
       font-size: 12px;
@@ -713,11 +695,9 @@
       gap: 6px;
       font-weight: 600;
     }
-
     .status-text.error {
       color: var(--bad);
     }
-
     .status-text.success {
       color: var(--good-deep);
     }
@@ -745,16 +725,8 @@
       </div>
       <div class="topbar-actions">
         <button class="btn btn-ghost" id="btnReset">↺ Start blank</button>
-        <button class="btn btn-line" id="btnSave" style="border-color: rgba(255,255,255,0.4); color: #fff;">💾 Save
-          Bill</button>
-        <button class="btn btn-line" id="btnPrintPdf" style="border-color: rgba(255,255,255,0.4); color: #fff;">📄
-          Download PDF</button>
+        <button class="btn btn-line" id="btnSave" style="border-color: rgba(255,255,255,0.4); color: #fff;">💾 Save Bill</button>
         <button class="btn btn-gold" id="btnExport">⬇ Download Excel</button>
-        <button class="btn btn-whatsapp" id="btnWhatsAppShare"><svg viewBox="0 0 448 512" width="15" height="15"
-            fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;">
-            <path
-              d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L32 503l141.1-37c32.6 17.8 69 27.2 106.4 27.2 122.4 0 222-99.6 222-222 0-59.3-23.2-115-65.1-157.1zM223.9 474c-33.2 0-65.7-8.9-94-25.7l-6.7-4-83.9 22 22.4-81.8-4.4-7C38.3 344 26 303.4 26 261.9c0-109.2 88.8-198 198-198 52.9 0 102.7 20.6 140 57.9 37.3 37.3 57.9 87.1 57.9 140 0 109.2-88.8 198-198 198zm108.3-148c-5.9-3-35-17.3-40.5-19.3-5.5-2-9.6-3-13.7 3-4.1 6-16 20.2-19.6 24.2-3.6 4-7.2 4.5-13.1 1.5-31.1-15.6-53.1-28.7-74.1-64.8-5.5-9.6 5.5-8.9 15.8-29.4 1.7-3.5.8-6.5-.4-9.5-1.2-3-11-26.5-15.1-36.4-4-9.7-8-8.4-11-8.5-2.8-.1-6.1-.1-9.4-.1s-8.7 1.2-13.2 6.1c-4.5 4.9-17.3 16.9-17.3 41.2s17.7 47.8 20.2 51.2c2.5 3.4 34.9 53.3 84.7 74.8 11.8 5.1 21.1 8.2 28.3 10.5 11.9 3.8 22.7 3.2 31.3 2 9.6-1.3 29.5-12 33.6-23.6 4.1-11.6 4.1-21.6 2.9-23.6-1.2-2-4.5-3-10.4-6z" />
-          </svg>Share WhatsApp</button>
       </div>
     </div>
   </div>
@@ -798,7 +770,8 @@
       <div class="grid2">
         <div>
           <p class="subgrid-title">To — Guest / Party Details</p>
-          <div class="field"><label>Party Name</label><input id="g_party" placeholder="e.g. Acme Corporation"></div>
+          <div class="field"><label>Party Name</label><input id="g_party"
+              placeholder="e.g. Acme Corporation"></div>
           <div class="field"><label>Address</label><textarea id="g_address"
               placeholder="Company / guest address"></textarea></div>
           <div class="field-row">
@@ -1005,18 +978,9 @@
     <!-- BOTTOM ACTIONS BAR -->
     <div class="bottom-actions">
       <div class="status-text" id="db_status_bottom">Firebase Status: Disconnected</div>
-      <button class="btn btn-ghost" id="btnResetBottom" style="border-color: var(--line); color: var(--teal-deep);">↺
-        Start blank</button>
-      <button class="btn btn-line" id="btnSaveBottom"
-        style="border-color: var(--teal); color: var(--teal); background: #fffefb;">💾 Save Bill to Firebase</button>
-      <button class="btn btn-line" id="btnPrintPdfBottom"
-        style="border-color: var(--teal); color: var(--teal); background: #fffefb;">📄 Download PDF</button>
+      <button class="btn btn-ghost" id="btnResetBottom" style="border-color: var(--line); color: var(--teal-deep);">↺ Start blank</button>
+      <button class="btn btn-line" id="btnSaveBottom" style="border-color: var(--teal); color: var(--teal); background: #fffefb;">💾 Save Bill to Firebase</button>
       <button class="btn btn-gold" id="btnExportBottom">⬇ Download Excel</button>
-      <button class="btn btn-whatsapp" id="btnWhatsAppShareBottom"><svg viewBox="0 0 448 512" width="15" height="15"
-          fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;">
-          <path
-            d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L32 503l141.1-37c32.6 17.8 69 27.2 106.4 27.2 122.4 0 222-99.6 222-222 0-59.3-23.2-115-65.1-157.1zM223.9 474c-33.2 0-65.7-8.9-94-25.7l-6.7-4-83.9 22 22.4-81.8-4.4-7C38.3 344 26 303.4 26 261.9c0-109.2 88.8-198 198-198 52.9 0 102.7 20.6 140 57.9 37.3 37.3 57.9 87.1 57.9 140 0 109.2-88.8 198-198 198zm108.3-148c-5.9-3-35-17.3-40.5-19.3-5.5-2-9.6-3-13.7 3-4.1 6-16 20.2-19.6 24.2-3.6 4-7.2 4.5-13.1 1.5-31.1-15.6-53.1-28.7-74.1-64.8-5.5-9.6 5.5-8.9 15.8-29.4 1.7-3.5.8-6.5-.4-9.5-1.2-3-11-26.5-15.1-36.4-4-9.7-8-8.4-11-8.5-2.8-.1-6.1-.1-9.4-.1s-8.7 1.2-13.2 6.1c-4.5 4.9-17.3 16.9-17.3 41.2s17.7 47.8 20.2 51.2c2.5 3.4 34.9 53.3 84.7 74.8 11.8 5.1 21.1 8.2 28.3 10.5 11.9 3.8 22.7 3.2 31.3 2 9.6-1.3 29.5-12 33.6-23.6 4.1-11.6 4.1-21.6 2.9-23.6-1.2-2-4.5-3-10.4-6z" />
-        </svg>Share WhatsApp</button>
     </div>
 
   </div>
@@ -1024,11 +988,6 @@
   <footer class="hint">Everything here recalculates live and stays in this browser tab only. Click <strong>Download
       Excel</strong> whenever you're ready for the final .xlsx bill summary.</footer>
   <datalist id="particulars-list"></datalist>
-
-  <div id="pdf-export-wrapper"
-    style="position: absolute; left: -9999px; top: 0; width: 794px; background: #faf6ee; color: #132524; font-family: 'Inter', sans-serif;">
-    <div id="pdf-export-content"></div>
-  </div>
 
   <!-- Firebase Compat SDKs (compatible with file:// protocol) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -1121,7 +1080,7 @@
         room.forEach(r => { if (r.particulars && r.particulars.trim()) particularsMemory.add(r.particulars.trim()); });
         fnb.forEach(r => { if (r.particulars && r.particulars.trim()) particularsMemory.add(r.particulars.trim()); });
         liq.forEach(r => { if (r.item && r.item.trim()) particularsMemory.add(r.item.trim()); });
-
+        
         const dl = document.getElementById('particulars-list');
         if (dl) {
           dl.innerHTML = Array.from(particularsMemory)
@@ -1317,7 +1276,7 @@
           const field = t.dataset.f;
           if (field) {
             r[field] = t.classList.contains('num') ? t.value : t.value;
-
+            
             // Auto Calculations Formulas
             if (kind === 'room' && (field === 'qty' || field === 'rate')) {
               r.base = num(r.qty) * num(r.rate);
@@ -1332,11 +1291,11 @@
               const amtInput = tr.querySelector('[data-f="amount"]');
               if (amtInput) amtInput.value = r.amount || '';
             }
-
+            
             if (field === 'particulars' || field === 'item') {
               updateMemoryDatalist();
             }
-
+            
             updateRowComputed(kind, r);
             renderTotals();
           }
@@ -1491,10 +1450,10 @@
         const dbBody = document.getElementById('db_body');
         const statusTop = document.getElementById('db_status');
         const statusBottom = document.getElementById('db_status_bottom');
-
+        
         try {
           const querySnapshot = await db.collection('bills').orderBy('billdate', 'desc').get();
-
+          
           let html = '';
           if (querySnapshot.empty) {
             html = `<tr><td colspan="5" style="text-align: center; color: var(--ink-soft); padding: 24px;">No saved bills found in Firebase.</td></tr>`;
@@ -1502,13 +1461,13 @@
             querySnapshot.forEach(docSnap => {
               const data = docSnap.data();
               const id = docSnap.id;
-
+              
               // Calculate grand total from totals structure
               const rSub = data.totals ? data.totals.roomSub : 0;
               const fSub = data.totals ? data.totals.fnbSub : 0;
               const lSub = data.totals ? data.totals.liqSub : 0;
               const grand = rSub + fSub + lSub;
-
+              
               const isEditingThis = id === currentBillId;
 
               html += `<tr data-dbid="${id}" style="${isEditingThis ? 'background: #fdfaf3; border-left: 3px solid var(--gold);' : ''}">
@@ -1548,20 +1507,20 @@
       async function loadBill(id) {
         const statusTop = document.getElementById('db_status');
         if (statusTop) statusTop.textContent = 'Loading bill details...';
-
+        
         try {
           const docSnap = await db.collection('bills').doc(id).get();
-
+          
           if (docSnap.exists) {
             const data = docSnap.data();
             currentBillId = id;
-
+            
             // Populate header fields
             const setV = (elementId, value) => {
               const el = document.getElementById(elementId);
               if (el) el.value = value || '';
             };
-
+            
             setV('g_party', data.partyName);
             setV('g_address', data.address);
             setV('g_contact', data.contact);
@@ -1573,7 +1532,7 @@
             setV('g_billdate', data.billdate);
             setV('g_pino', data.pino);
             setV('g_advance', data.advance);
-
+            
             if (data.resort) {
               setV('r_name', data.resort.name);
               setV('r_address', data.resort.address);
@@ -1585,7 +1544,7 @@
               setV('r_ifsc', data.resort.ifsc);
               setV('r_branch', data.resort.branch);
             }
-
+            
             // Re-inflate room, fnb, liq state arrays with new UIDs
             room = (data.room || []).map(r => newRoomRow({
               date: r.date,
@@ -1596,7 +1555,7 @@
               base: r.base,
               gst: r.gst
             }));
-
+            
             fnb = (data.fnb || []).map(r => newRoomRow({
               date: r.date,
               particulars: r.particulars,
@@ -1606,7 +1565,7 @@
               base: r.base,
               gst: r.gst
             }));
-
+            
             liq = (data.liq || []).map(r => newLiqRow({
               date: r.date,
               item: r.item,
@@ -1616,7 +1575,7 @@
               vat: r.vat,
               remark: r.remark
             }));
-
+            
             renderAll();
             if (statusTop) statusTop.textContent = 'Editing Saved Bill';
           } else {
@@ -1630,20 +1589,20 @@
 
       async function deleteBill(id) {
         if (!confirm('Are you sure you want to permanently delete this saved bill from Firebase?')) return;
-
+        
         const password = prompt('Enter password to confirm deletion:');
         if (password === null) return; // user cancelled prompt
         if (password !== '0063') {
           alert('Incorrect password! Deletion aborted.');
           return;
         }
-
+        
         const statusTop = document.getElementById('db_status');
         if (statusTop) statusTop.textContent = 'Deleting bill...';
-
+        
         try {
           await db.collection('bills').doc(id).delete();
-
+          
           if (currentBillId === id) {
             currentBillId = null;
             blank(); // reset back to empty
@@ -2152,853 +2111,34 @@
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
       }
 
-      async function generatePdfBlob() {
-        const g = id => { const el = document.getElementById(id); return el ? el.value : ''; };
-
-        const activeRooms = room.filter(r => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
-        const activeFnbs = fnb.filter(r => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
-        const activeLiqs = liq.filter(r => (r.item || '').trim() !== '' || num(r.amount) !== 0);
-
-        let hasRooms = activeRooms.length > 0;
-        let hasFnbs = activeFnbs.length > 0;
-        let hasLiqs = activeLiqs.length > 0;
-        if (!hasRooms && !hasFnbs && !hasLiqs) hasRooms = true;
-
-        let sections = [], grandGst = 0, grandTotal = 0, tablesHtml = '';
-
-        if (hasRooms) {
-          sections.push('A');
-          tablesHtml += `<div class="pdf-section-title">ROOM CHARGES (GST)</div>
-          <table class="pdf-data-table"><thead><tr>
-            <th style="width:14%">Date</th><th>Particulars</th>
-            <th style="width:8%;text-align:right">Pax</th><th style="width:8%;text-align:right">Rooms</th>
-            <th style="width:11%;text-align:right">Rate</th><th style="width:13%;text-align:right">Base Amount</th>
-            <th style="width:8%;text-align:center">GST%</th><th style="width:12%;text-align:right">GST Amt</th>
-            <th style="width:14%;text-align:right">Total</th>
-          </tr></thead><tbody>`;
-          const list = activeRooms.length > 0 ? activeRooms : [newRoomRow()];
-          let subGst = 0, subTotal = 0;
-          list.forEach(r => {
-            const { gstAmt, total } = calcRoomRow(r);
-            subGst += gstAmt; subTotal += total;
-            tablesHtml += `<tr>
-              <td style="text-align:center">${esc(formatTableDate(r.date))}</td>
-              <td>${esc(r.particulars)}</td>
-              <td style="text-align:right">${r.pax !== '' ? num(r.pax) : ''}</td>
-              <td style="text-align:right">${r.qty !== '' ? num(r.qty) : ''}</td>
-              <td style="text-align:right">${num(r.rate) ? fmt(num(r.rate)) : ''}</td>
-              <td style="text-align:right">${fmt(num(r.base))}</td>
-              <td style="text-align:center">${num(r.gst)}%</td>
-              <td style="text-align:right">${fmt(gstAmt)}</td>
-              <td style="text-align:right;font-weight:bold">${fmt(total)}</td>
-            </tr>`;
-          });
-          grandGst += subGst; grandTotal += subTotal;
-          tablesHtml += `<tr class="pdf-subtotal-row">
-            <td colspan="7" style="text-align:right">TOTAL:</td>
-            <td style="text-align:right">${fmt(subGst)}</td>
-            <td style="text-align:right">${fmt(subTotal)}</td>
-          </tr></tbody></table>`;
-        }
-
-        if (hasFnbs) {
-          sections.push('B');
-          tablesHtml += `<div class="pdf-section-title">FOOD &amp; BEVERAGE (GST)</div>
-          <table class="pdf-data-table"><thead><tr>
-            <th style="width:14%">Date</th><th>Particulars</th>
-            <th style="width:8%;text-align:right">Pax</th>
-            <th style="width:12%;text-align:right">Rate</th><th style="width:14%;text-align:right">Base Amount</th>
-            <th style="width:8%;text-align:center">GST%</th><th style="width:12%;text-align:right">GST Amt</th>
-            <th style="width:14%;text-align:right">Total</th>
-          </tr></thead><tbody>`;
-          const list = activeFnbs.length > 0 ? activeFnbs : [newRoomRow({ qty: 1 })];
-          let subGst = 0, subTotal = 0;
-          list.forEach(r => {
-            const { gstAmt, total } = calcRoomRow(r);
-            subGst += gstAmt; subTotal += total;
-            tablesHtml += `<tr>
-              <td style="text-align:center">${esc(formatTableDate(r.date))}</td>
-              <td>${esc(r.particulars)}</td>
-              <td style="text-align:right">${r.pax !== '' ? num(r.pax) : ''}</td>
-              <td style="text-align:right">${num(r.rate) ? fmt(num(r.rate)) : ''}</td>
-              <td style="text-align:right">${fmt(num(r.base))}</td>
-              <td style="text-align:center">${num(r.gst)}%</td>
-              <td style="text-align:right">${fmt(gstAmt)}</td>
-              <td style="text-align:right;font-weight:bold">${fmt(total)}</td>
-            </tr>`;
-          });
-          grandGst += subGst; grandTotal += subTotal;
-          tablesHtml += `<tr class="pdf-subtotal-row">
-            <td colspan="6" style="text-align:right">TOTAL:</td>
-            <td style="text-align:right">${fmt(subGst)}</td>
-            <td style="text-align:right">${fmt(subTotal)}</td>
-          </tr></tbody></table>`;
-        }
-
-        if (hasLiqs) {
-          sections.push('C');
-          tablesHtml += `<div class="pdf-section-title">HARD LIQUOR — VAT ON ALCOHOL</div>
-          <table class="pdf-data-table"><thead><tr>
-            <th style="width:14%">Date</th><th>Item Name (Remark)</th>
-            <th style="width:8%;text-align:right">Qty</th>
-            <th style="width:12%;text-align:right">Rate</th><th style="width:14%;text-align:right">Amount</th>
-            <th style="width:8%;text-align:center">VAT%</th><th style="width:12%;text-align:right">VAT Amt</th>
-            <th style="width:14%;text-align:right">Net Amount</th>
-          </tr></thead><tbody>`;
-          const list = activeLiqs.length > 0 ? activeLiqs : [newLiqRow()];
-          let subVat = 0, subNet = 0;
-          list.forEach(r => {
-            const { vatAmt, net } = calcLiqRow(r);
-            subVat += vatAmt; subNet += net;
-            tablesHtml += `<tr>
-              <td style="text-align:center">${esc(formatTableDate(r.date))}</td>
-              <td>${esc(r.item)}${r.remark ? ` <span style="font-size:9px;color:#666;font-style:italic">(${esc(r.remark)})</span>` : ''}</td>
-              <td style="text-align:right">${r.qty !== '' ? num(r.qty) : ''}</td>
-              <td style="text-align:right">${num(r.rate) ? fmt(num(r.rate)) : ''}</td>
-              <td style="text-align:right">${fmt(num(r.amount))}</td>
-              <td style="text-align:center">${num(r.vat)}%</td>
-              <td style="text-align:right">${fmt(vatAmt)}</td>
-              <td style="text-align:right;font-weight:bold">${fmt(net)}</td>
-            </tr>`;
-          });
-          grandGst += subVat; grandTotal += subNet;
-          tablesHtml += `<tr class="pdf-subtotal-row">
-            <td colspan="6" style="text-align:right">TOTAL:</td>
-            <td style="text-align:right">${fmt(subVat)}</td>
-            <td style="text-align:right">${fmt(subNet)}</td>
-          </tr></tbody></table>`;
-        }
-
-        const totalLabel = `TOTAL (${sections.join('+')})`;
-        const adv = num(g('g_advance'));
-        const bal = grandTotal - adv;
-        let balLabel = 'BALANCE DUE FROM GUEST', balClass = 'due';
-        if (Math.abs(bal) < 0.005) { balLabel = 'SETTLED'; balClass = 'settled'; }
-        else if (bal < 0) { balLabel = 'REFUND DUE TO GUEST'; balClass = 'refund'; }
-
-        const partyName = (g('g_party') || 'guest').trim().replace(/[^a-z0-9]+/gi, '_').slice(0, 40) || 'guest';
-
-        const fullHtml = `
-          <style>
-            * { box-sizing: border-box; }
-            .pdf-title-bar { background:#0f3d3e;color:#fff;font-size:18px;font-weight:bold;text-align:center;padding:9px;margin-bottom:10px; }
-            .pdf-header-table { width:100%;border-collapse:collapse;margin-bottom:10px; }
-            .pdf-header-table td { border:1px solid #e2ddd0;padding:6px 9px;vertical-align:top;font-size:10px;line-height:1.45; }
-            .pdf-section-title { background:#e6eceb;color:#0f3d3e;font-weight:bold;font-size:9.5px;letter-spacing:.06em;padding:4px 7px;border:1px solid #e2ddd0;margin-top:10px;margin-bottom:3px;text-transform:uppercase; }
-            .pdf-data-table { width:100%;border-collapse:collapse;margin-bottom:3px; }
-            .pdf-data-table th { background:#d8a448;color:#132524;font-weight:bold;font-size:8.5px;padding:4px;border:1px solid #e2ddd0;text-align:center;text-transform:uppercase; }
-            .pdf-data-table td { padding:3px 5px;border:1px solid #e2ddd0;font-size:9px;color:#132524; }
-            .pdf-subtotal-row td { background:#faf6ee;font-weight:bold;font-size:9px;color:#0f3d3e;border-top:1.5px solid #0f3d3e; }
-            .pdf-summary-table { width:100%;border-collapse:collapse;margin-top:9px; }
-            .pdf-summary-table td { padding:6px 9px;border:1px solid #e2ddd0;font-size:10px; }
-            .grand-total-row { background:#0f3d3e;color:#fff; }
-            .advance-row { background:#e2ddd0;color:#132524; }
-            .balance-row.due { background:#fbeae5;color:#b3492f; }
-            .balance-row.refund { background:#e7f3ec;color:#2f7d5e; }
-            .balance-row.settled { background:#f1f4f2;color:#555; }
-          </style>
-          <div class="pdf-title-bar">PERFORMA INVOICE</div>
-          <table class="pdf-header-table"><tr>
-            <td style="width:50%">
-              <div style="font-weight:bold;border-bottom:1px dashed #e2ddd0;padding-bottom:3px;margin-bottom:4px;color:#0f3d3e">TO — GUEST / PARTY DETAILS</div>
-              <strong>Party Name:</strong> ${esc(g('g_party')) || 'N/A'}<br>
-              <strong>Address:</strong> ${esc(g('g_address')) || 'N/A'}<br>
-              <strong>Contact No:</strong> ${esc(g('g_contact')) || 'N/A'}<br>
-              <strong>GST No:</strong> ${esc(g('g_gst')) || 'N/A'}<br>
-              <strong>Contact Person:</strong> ${esc(g('g_person')) || 'N/A'}<br>
-              <strong>Check-In:</strong> ${esc(formatHeaderDate(g('g_checkin')))} &nbsp;|&nbsp; <strong>Check-Out:</strong> ${esc(formatHeaderDate(g('g_checkout')))}<br>
-              <strong>Plan:</strong> ${esc(g('g_plan'))} &nbsp;|&nbsp; <strong>Bill Date:</strong> ${esc(formatHeaderDate(g('g_billdate')))}<br>
-              <strong>PI Number:</strong> ${esc(g('g_pino')) || 'N/A'}
-            </td>
-            <td style="width:50%">
-              <div style="font-weight:bold;border-bottom:1px dashed #e2ddd0;padding-bottom:3px;margin-bottom:4px;color:#0f3d3e">FROM — RESORT DETAILS</div>
-              <strong>Resort Name:</strong> ${esc(g('r_name'))}<br>
-              <strong>Address:</strong> ${esc(g('r_address'))}<br>
-              <strong>GST No:</strong> ${esc(g('r_gst'))}<br>
-              <strong>Tel No:</strong> ${esc(g('r_tel'))}<br>
-              <strong>PI Validity:</strong> ${esc(formatHeaderDate(g('r_pivalidity')))}<br>
-              <div style="margin-top:5px;border-top:1px dashed #e2ddd0;padding-top:3px">
-                <strong>BANK DETAILS:</strong><br>
-                <strong>Bank:</strong> ${esc(g('r_bank'))} &nbsp;|&nbsp; <strong>A/C:</strong> ${esc(g('r_acct'))}<br>
-                <strong>IFSC:</strong> ${esc(g('r_ifsc'))} &nbsp;|&nbsp; <strong>Branch:</strong> ${esc(g('r_branch'))}
-              </div>
-            </td>
-          </tr></table>
-          ${tablesHtml}
-          <table class="pdf-data-table" style="margin-top:7px">
-            <tr class="pdf-subtotal-row" style="background:#faf6ee">
-              <td style="text-align:right;border-bottom:2px double #0f3d3e;font-weight:bold">${totalLabel}:</td>
-              <td style="width:12%;text-align:right;border-bottom:2px double #0f3d3e;font-weight:bold;color:#0f3d3e">${fmt(grandGst)}</td>
-              <td style="width:14%;text-align:right;border-bottom:2px double #0f3d3e;font-weight:bold;color:#0f3d3e">${fmt(grandTotal)}</td>
-            </tr>
-          </table>
-          <table class="pdf-summary-table">
-            <tr class="grand-total-row"><td style="text-align:right;width:74%">GRAND TOTAL:</td><td style="text-align:right;width:26%;font-weight:bold">${money(grandTotal)}</td></tr>
-            <tr class="advance-row"><td style="text-align:right">ADVANCE RECEIVED:</td><td style="text-align:right;font-weight:bold">${money(adv)}</td></tr>
-            <tr class="balance-row ${balClass}"><td style="text-align:right;text-transform:uppercase">${balLabel}:</td><td style="text-align:right;font-weight:bold">${money(Math.abs(bal))}</td></tr>
-          </table>
-        `;
-
-        // --- FIX 1: Use position:fixed with top:-99999px so browser computes real layout ---
-        const tempEl = document.createElement('div');
-        tempEl.style.cssText = 'position:fixed;top:-99999px;left:0;width:794px;background:#faf6ee;font-family:Inter,Arial,sans-serif;color:#132524;';
-        tempEl.innerHTML = fullHtml;
-        document.body.appendChild(tempEl);
-
-        const opt = {
-          margin: [10, 10, 10, 10],
-          filename: `Devka_Beach_Resort_Bill_${partyName}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, letterRendering: true, windowWidth: 794 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-        };
-
-        try {
-          // --- FIX 2: Return blob directly instead of returning the worker (which is a thenable) ---
-          const blob = await html2pdf().from(tempEl).set(opt).outputPdf('blob');
-          return { blob, partyName };
-        } finally {
-          document.body.removeChild(tempEl);
-        }
-      }
-
-      async function downloadPdf() {
-        const statusTop = document.getElementById('db_status');
-        const statusBottom = document.getElementById('db_status_bottom');
-        function setStatus(text, type) {
-          if (statusTop) { statusTop.textContent = text; statusTop.className = 'card-note ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
-          if (statusBottom) { statusBottom.textContent = text; statusBottom.className = 'status-text ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
-        }
-        setStatus('Generating PDF...', 'loading');
-        try {
-          const { blob, partyName } = await generatePdfBlob();
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = `Devka_Beach_Resort_Bill_${partyName}.pdf`;
-          document.body.appendChild(a); a.click(); document.body.removeChild(a);
-          URL.revokeObjectURL(a.href);
-          setStatus('PDF downloaded!', 'success');
-        } catch (err) {
-          console.error('PDF error:', err);
-          setStatus('PDF failed: ' + err.message, 'error');
-          alert('Could not generate PDF: ' + err.message);
-        } finally {
-          setTimeout(() => {
-            if (statusTop && statusTop.classList.contains('success')) { statusTop.textContent = currentBillId ? 'Editing Saved Bill' : 'Ready'; statusTop.className = 'card-note'; }
-            if (statusBottom && statusBottom.classList.contains('success')) { statusBottom.textContent = 'Firebase connected'; statusBottom.className = 'status-text'; }
-          }, 3000);
-        }
-      }
-
-      async function shareToWhatsApp() {
-        const statusTop = document.getElementById('db_status');
-        const statusBottom = document.getElementById('db_status_bottom');
-        function setStatus(text, type) {
-          if (statusTop) { statusTop.textContent = text; statusTop.className = 'card-note ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
-          if (statusBottom) { statusBottom.textContent = text; statusBottom.className = 'status-text ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
-        }
-        setStatus('Generating PDF for WhatsApp...', 'loading');
-        try {
-          const g = id => { const el = document.getElementById(id); return el ? el.value : ''; };
-          const partyNameVal = g('g_party') || 'Guest';
-          const pinoVal = g('g_pino') || 'N/A';
-          const billDateVal = formatHeaderDate(g('g_billdate'));
-          const { roomSub, fnbSub, liqSub } = subtotals();
-          const grandTotalVal = roomSub + fnbSub + liqSub;
-          const advVal = num(g('g_advance'));
-          const balVal = grandTotalVal - advVal;
-          const balanceStr = Math.abs(balVal) < 0.005 ? '*Settled*' : balVal > 0 ? `*Balance Due:* ₹${fmt(balVal)}` : `*Refund Due:* ₹${fmt(Math.abs(balVal))}`;
-          const messageText =
-            `*Devka Beach Resort — Performa Invoice*\n` +
-            `-----------------------------------\n` +
-            `*PI No:* ${pinoVal}\n` +
-            `*Guest/Party:* ${partyNameVal}\n` +
-            `*Date:* ${billDateVal}\n` +
-            `*Grand Total:* ₹${fmt(grandTotalVal)}\n` +
-            `*Advance:* ₹${fmt(advVal)}\n` +
-            `${balanceStr}\n\n` +
-            `Please find the attached PDF Invoice.`;
-
-          const { blob: pdfBlob, partyName: pn } = await generatePdfBlob();
-          const filename = `Devka_Beach_Resort_Bill_${pn}.pdf`;
-          const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
-
-          if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-            setStatus('Sharing PDF to WhatsApp...', 'loading');
-            await navigator.share({ files: [pdfFile], title: `Devka Beach Resort Bill — ${partyNameVal}`, text: messageText });
-            setStatus('Shared successfully!', 'success');
-          } else {
-            // Desktop fallback: download PDF + open WhatsApp Web with pre-filled text
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(pdfBlob);
-            a.download = filename;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            URL.revokeObjectURL(a.href);
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(messageText)}`, '_blank');
-            setStatus('PDF downloaded. WhatsApp opened!', 'success');
-            alert('PDF generated and downloaded!\n\nOpening WhatsApp Web — select your contact and attach the downloaded PDF.');
-          }
-        } catch (err) {
-          console.error('WhatsApp Share error:', err);
-          setStatus('Share Failed: ' + err.message, 'error');
-          alert('Could not share to WhatsApp: ' + err.message);
-        } finally {
-          setTimeout(() => {
-            if (statusTop && statusTop.classList.contains('success')) { statusTop.textContent = currentBillId ? 'Editing Saved Bill' : 'Ready'; statusTop.className = 'card-note'; }
-            if (statusBottom && statusBottom.classList.contains('success')) { statusBottom.textContent = 'Firebase connected'; statusBottom.className = 'status-text'; }
-          }, 4000);
-        }
-      }
-
       // ---------- Action Bindings ----------
+      document.getElementById('btnSave').addEventListener('click', saveBill);
+      document.getElementById('btnSaveBottom').addEventListener('click', saveBill);
 
-      const g = id => {
-        const el = document.getElementById(id);
-        return el ? el.value : '';
-      };
+      document.getElementById('btnExport').addEventListener('click', () => {
+        exportExcel().catch(err => { console.error(err); alert('Could not generate the Excel file: ' + err.message); });
+      });
+      document.getElementById('btnExportBottom').addEventListener('click', () => {
+        exportExcel().catch(err => { console.error(err); alert('Could not generate the Excel file: ' + err.message); });
+      });
 
-      const activeRooms = room.filter(r => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
-      const activeFnbs = fnb.filter(r => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
-      const activeLiqs = liq.filter(r => (r.item || '').trim() !== '' || num(r.amount) !== 0);
-
-      let hasRooms = activeRooms.length > 0;
-      let hasFnbs = activeFnbs.length > 0;
-      let hasLiqs = activeLiqs.length > 0;
-
-      if (!hasRooms && !hasFnbs && !hasLiqs) {
-        hasRooms = true;
-      }
-
-      let sections = [];
-      let grandGst = 0, grandTotal = 0;
-      let tablesHtml = '';
-
-      if (hasRooms) {
-        sections.push('A');
-        tablesHtml += `
-            <div class="pdf-section-title">ROOM CHARGES (GST)</div>
-            <table class="pdf-data-table">
-              <thead>
-                <tr>
-                  <th style="width: 14%;">Date</th>
-                  <th>Particulars</th>
-                  <th style="width: 8%; text-align: right;">Pax</th>
-                  <th style="width: 8%; text-align: right;">Rooms</th>
-                  <th style="width: 11%; text-align: right;">Rate</th>
-                  <th style="width: 13%; text-align: right;">Base Amount</th>
-                  <th style="width: 8%; text-align: center;">GST %</th>
-                  <th style="width: 12%; text-align: right;">GST Amt</th>
-                  <th style="width: 14%; text-align: right;">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-          `;
-        const list = activeRooms.length > 0 ? activeRooms : [newRoomRow()];
-        let subGst = 0, subTotal = 0;
-        list.forEach(r => {
-          const { gstAmt, total } = calcRoomRow(r);
-          subGst += gstAmt;
-          subTotal += total;
-          tablesHtml += `
-              <tr>
-                <td style="text-align: center;">${esc(formatTableDate(r.date))}</td>
-                <td>${esc(r.particulars)}</td>
-                <td style="text-align: right;">${r.pax !== '' ? num(r.pax) : ''}</td>
-                <td style="text-align: right;">${r.qty !== '' ? num(r.qty) : ''}</td>
-                <td style="text-align: right;">${num(r.rate) ? fmt(num(r.rate)) : ''}</td>
-                <td style="text-align: right;">${fmt(num(r.base))}</td>
-                <td style="text-align: center;">${num(r.gst)}%</td>
-                <td style="text-align: right;">${fmt(gstAmt)}</td>
-                <td style="text-align: right; font-weight: bold;">${fmt(total)}</td>
-              </tr>
-            `;
-        });
-        grandGst += subGst;
-        grandTotal += subTotal;
-        tablesHtml += `
-                <tr class="pdf-subtotal-row">
-                  <td colspan="7" style="text-align: right;">TOTAL:</td>
-                  <td style="text-align: right;">${fmt(subGst)}</td>
-                  <td style="text-align: right;">${fmt(subTotal)}</td>
-                </tr>
-              </tbody>
-            </table>
-          `;
-      }
-
-      if (hasFnbs) {
-        sections.push('B');
-        tablesHtml += `
-            <div class="pdf-section-title">FOOD & BEVERAGE (GST)</div>
-            <table class="pdf-data-table">
-              <thead>
-                <tr>
-                  <th style="width: 14%;">Date</th>
-                  <th>Particulars</th>
-                  <th style="width: 8%; text-align: right;">Pax</th>
-                  <th style="width: 12%; text-align: right;">Rate</th>
-                  <th style="width: 14%; text-align: right;">Base Amount</th>
-                  <th style="width: 8%; text-align: center;">GST %</th>
-                  <th style="width: 12%; text-align: right;">GST Amt</th>
-                  <th style="width: 14%; text-align: right;">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-          `;
-        const list = activeFnbs.length > 0 ? activeFnbs : [newRoomRow({ qty: 1 })];
-        let subGst = 0, subTotal = 0;
-        list.forEach(r => {
-          const { gstAmt, total } = calcRoomRow(r);
-          subGst += gstAmt;
-          subTotal += total;
-          tablesHtml += `
-              <tr>
-                <td style="text-align: center;">${esc(formatTableDate(r.date))}</td>
-                <td>${esc(r.particulars)}</td>
-                <td style="text-align: right;">${r.pax !== '' ? num(r.pax) : ''}</td>
-                <td style="text-align: right;">${num(r.rate) ? fmt(num(r.rate)) : ''}</td>
-                <td style="text-align: right;">${fmt(num(r.base))}</td>
-                <td style="text-align: center;">${num(r.gst)}%</td>
-                <td style="text-align: right;">${fmt(gstAmt)}</td>
-                <td style="text-align: right; font-weight: bold;">${fmt(total)}</td>
-              </tr>
-            `;
-        });
-        grandGst += subGst;
-        grandTotal += subTotal;
-        tablesHtml += `
-                <tr class="pdf-subtotal-row">
-                  <td colspan="6" style="text-align: right;">TOTAL:</td>
-                  <td style="text-align: right;">${fmt(subGst)}</td>
-                  <td style="text-align: right;">${fmt(subTotal)}</td>
-                </tr>
-              </tbody>
-            </table>
-          `;
-      }
-
-      if (hasLiqs) {
-        sections.push('C');
-        tablesHtml += `
-            <div class="pdf-section-title">HARD LIQUOR — VAT ON ALCOHOL</div>
-            <table class="pdf-data-table">
-              <thead>
-                <tr>
-                  <th style="width: 14%;">Date</th>
-                  <th>Item Name (Remark)</th>
-                  <th style="width: 8%; text-align: right;">Qty</th>
-                  <th style="width: 12%; text-align: right;">Rate</th>
-                  <th style="width: 14%; text-align: right;">Amount</th>
-                  <th style="width: 8%; text-align: center;">VAT %</th>
-                  <th style="width: 12%; text-align: right;">VAT Amt</th>
-                  <th style="width: 14%; text-align: right;">Net Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-          `;
-        const list = activeLiqs.length > 0 ? activeLiqs : [newLiqRow()];
-        let subVat = 0, subNet = 0;
-        list.forEach(r => {
-          const { vatAmt, net } = calcLiqRow(r);
-          subVat += vatAmt;
-          subNet += net;
-          tablesHtml += `
-              <tr>
-                <td style="text-align: center;">${esc(formatTableDate(r.date))}</td>
-                <td>${esc(r.item)}${r.remark ? ` <span style="font-size:9px; color:#666; font-style:italic;">(${esc(r.remark)})</span>` : ''}</td>
-                <td style="text-align: right;">${r.qty !== '' ? num(r.qty) : ''}</td>
-                <td style="text-align: right;">${num(r.rate) ? fmt(num(r.rate)) : ''}</td>
-                <td style="text-align: right;">${fmt(num(r.amount))}</td>
-                <td style="text-align: center;">${num(r.vat)}%</td>
-                <td style="text-align: right;">${fmt(vatAmt)}</td>
-                <td style="text-align: right; font-weight: bold;">${fmt(net)}</td>
-              </tr>
-            `;
-        });
-        grandGst += subVat;
-        grandTotal += subNet;
-        tablesHtml += `
-                <tr class="pdf-subtotal-row">
-                  <td colspan="6" style="text-align: right;">TOTAL:</td>
-                  <td style="text-align: right;">${fmt(subVat)}</td>
-                  <td style="text-align: right;">${fmt(subNet)}</td>
-                </tr>
-              </tbody>
-            </table>
-          `;
-      }
-
-      const totalLabel = `TOTAL (${sections.join('+')})`;
-      const adv = num(g('g_advance'));
-      const bal = grandTotal - adv;
-      let balLabel = 'BALANCE DUE FROM GUEST';
-      let balClass = 'due';
-      if (Math.abs(bal) < 0.005) {
-        balLabel = 'SETTLED';
-        balClass = 'settled';
-      } else if (bal < 0) {
-        balLabel = 'REFUND DUE TO GUEST';
-        balClass = 'refund';
-      }
-
-      content.innerHTML = `
-          <style>
-            #pdf-export-content {
-              box-sizing: border-box;
-              font-family: 'Inter', sans-serif;
-              color: #132524;
-              background: #faf6ee;
-              padding: 5px;
-            }
-            .pdf-title-bar {
-              background: #0f3d3e;
-              color: #ffffff;
-              font-size: 19px;
-              font-weight: bold;
-              text-align: center;
-              padding: 9px;
-              margin-bottom: 12px;
-              border-radius: 6px;
-              letter-spacing: 0.05em;
-            }
-            .pdf-header-table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-bottom: 12px;
-            }
-            .pdf-header-table td {
-              border: 1px solid #e2ddd0;
-              padding: 6px 10px;
-              vertical-align: top;
-              font-size: 10.5px;
-              line-height: 1.45;
-            }
-            .pdf-section-title {
-              background: #e6eceb;
-              color: #0f3d3e;
-              font-weight: bold;
-              font-size: 10px;
-              letter-spacing: 0.06em;
-              padding: 4px 8px;
-              border: 1px solid #e2ddd0;
-              margin-top: 12px;
-              margin-bottom: 4px;
-              text-transform: uppercase;
-            }
-            .pdf-data-table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-bottom: 4px;
-            }
-            .pdf-data-table th {
-              background: #d8a448;
-              color: #132524;
-              font-weight: bold;
-              font-size: 9.5px;
-              padding: 5px;
-              border: 1px solid #e2ddd0;
-              text-align: center;
-              text-transform: uppercase;
-            }
-            .pdf-data-table td {
-              padding: 4px 6px;
-              border: 1px solid #e2ddd0;
-              font-size: 10px;
-              color: #132524;
-            }
-            .pdf-subtotal-row td {
-              background: #faf6ee;
-              font-weight: bold;
-              font-size: 10px;
-              color: #0f3d3e;
-              border-top: 1.5px solid #0f3d3e;
-            }
-            .pdf-summary-table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 10px;
-            }
-            .pdf-summary-table td {
-              padding: 7px 10px;
-              border: 1px solid #e2ddd0;
-              font-size: 11px;
-            }
-            .grand-total-row {
-              background: #0f3d3e;
-              color: #ffffff;
-            }
-            .advance-row {
-              background: #e2ddd0;
-              color: #132524;
-            }
-            .balance-row.due {
-              background: #fbeae5;
-              color: #b3492f;
-            }
-            .balance-row.refund {
-              background: #e7f3ec;
-              color: #2f7d5e;
-            }
-            .balance-row.settled {
-              background: #f1f4f2;
-              color: #555555;
-            }
-          </style>
-          <div class="pdf-title-bar">PERFORMA INVOICE</div>
-          
-          <table class="pdf-header-table">
-            <tr>
-              <td style="width: 50%;">
-                <div style="font-weight: bold; border-bottom: 1px dashed #e2ddd0; padding-bottom: 3px; margin-bottom: 5px; color: #0f3d3e;">TO — GUEST / PARTY DETAILS</div>
-                <strong>Party Name:</strong> ${esc(g('g_party')) || 'N/A'}<br/>
-                <strong>Address:</strong> ${esc(g('g_address')) || 'N/A'}<br/>
-                <strong>Contact No:</strong> ${esc(g('g_contact')) || 'N/A'}<br/>
-                <strong>GST No:</strong> ${esc(g('g_gst')) || 'N/A'}<br/>
-                <strong>Contact Person:</strong> ${esc(g('g_person')) || 'N/A'}<br/>
-                <strong>Check-In:</strong> ${esc(formatHeaderDate(g('g_checkin')))} &nbsp;|&nbsp; <strong>Check-Out:</strong> ${esc(formatHeaderDate(g('g_checkout')))}<br/>
-                <strong>Plan:</strong> ${esc(g('g_plan'))} &nbsp;|&nbsp; <strong>Bill Date:</strong> ${esc(formatHeaderDate(g('g_billdate')))}<br/>
-                <strong>PI Number:</strong> ${esc(g('g_pino')) || 'N/A'}
-              </td>
-              <td style="width: 50%;">
-                <div style="font-weight: bold; border-bottom: 1px dashed #e2ddd0; padding-bottom: 3px; margin-bottom: 5px; color: #0f3d3e;">FROM — RESORT DETAILS</div>
-                <strong>Resort Name:</strong> ${esc(g('r_name'))}<br/>
-                <strong>Address:</strong> ${esc(g('r_address'))}<br/>
-                <strong>GST No:</strong> ${esc(g('r_gst'))}<br/>
-                <strong>Tel No:</strong> ${esc(g('r_tel'))}<br/>
-                <strong>PI Validity:</strong> ${esc(formatHeaderDate(g('r_pivalidity')))}<br/>
-                <div style="margin-top: 6px; border-top: 1px dashed #e2ddd0; padding-top: 4px;">
-                  <strong>BANK DETAILS:</strong><br/>
-                  <strong>Bank Name:</strong> ${esc(g('r_bank'))} &nbsp;|&nbsp; <strong>A/C No:</strong> ${esc(g('r_acct'))}<br/>
-                  <strong>IFSC Code:</strong> ${esc(g('r_ifsc'))} &nbsp;|&nbsp; <strong>Branch:</strong> ${esc(g('r_branch'))}
-                </div>
-              </td>
-            </tr>
-          </table>
-
-          ${tablesHtml}
-
-          <table class="pdf-data-table" style="margin-top: 8px;">
-            <tr class="pdf-subtotal-row" style="background-color: #faf6ee;">
-              <td style="text-align: right; border-bottom: 2px double #0f3d3e; font-weight: bold;">${totalLabel}:</td>
-              <td style="width: 12%; text-align: right; border-bottom: 2px double #0f3d3e; font-weight: bold; color: #0f3d3e;">${fmt(grandGst)}</td>
-              <td style="width: 14%; text-align: right; border-bottom: 2px double #0f3d3e; font-weight: bold; color: #0f3d3e;">${fmt(grandTotal)}</td>
-            </tr>
-          </table>
-
-          <table class="pdf-summary-table">
-            <tr class="grand-total-row">
-              <td style="text-align: right; width: 74%;">GRAND TOTAL:</td>
-              <td style="text-align: right; width: 26%; font-weight: bold;">${money(grandTotal)}</td>
-            </tr>
-            <tr class="advance-row">
-              <td style="text-align: right;">ADVANCE RECEIVED:</td>
-              <td style="text-align: right; font-weight: bold;">${money(adv)}</td>
-            </tr>
-            <tr class="balance-row ${balClass}">
-              <td style="text-align: right; text-transform: uppercase;">${balLabel}:</td>
-              <td style="text-align: right; font-weight: bold;">${money(Math.abs(bal))}</td>
-            </tr>
-          </table>
-        `;
-
-      const partyName = (g('g_party') || 'guest').trim().replace(/[^a-z0-9]+/gi, '_').slice(0, 40) || 'guest';
-      const opt = {
-        margin: [10, 10, 10, 10],
-        filename: `Devka_Beach_Resort_Bill_${partyName}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-      };
-
-      const worker = html2pdf().from(wrapper).set(opt);
-
-      if (shouldDownload) {
-        await worker.save();
-      }
-
-      return worker;
-    }
-
-      async function downloadPdf() {
-      const statusTop = document.getElementById('db_status');
-      const statusBottom = document.getElementById('db_status_bottom');
-
-      function setStatus(text, type) {
-        if (statusTop) {
-          statusTop.textContent = text;
-          statusTop.className = 'card-note ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : '');
+      document.getElementById('db_body').addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const act = btn.dataset.act;
+        const id = btn.dataset.id;
+        if (act === 'edit') {
+          loadBill(id);
+        } else if (act === 'del') {
+          deleteBill(id);
         }
-        if (statusBottom) {
-          statusBottom.textContent = text;
-          statusBottom.className = 'status-text ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : '');
-        }
-      }
+      });
 
-      setStatus('Generating PDF summary...', 'loading');
-      try {
-        await generatePdf(true);
-        setStatus('PDF downloaded successfully!', 'success');
-      } catch (err) {
-        console.error('Error generating PDF: ', err);
-        setStatus('PDF generation failed: ' + err.message, 'error');
-        alert('Could not generate PDF: ' + err.message);
-      } finally {
-        setTimeout(() => {
-          if (statusTop && statusTop.classList.contains('success')) {
-            statusTop.textContent = currentBillId ? 'Editing Saved Bill' : 'Ready';
-            statusTop.className = 'card-note';
-          }
-          if (statusBottom && statusBottom.classList.contains('success')) {
-            statusBottom.textContent = 'Firebase connected';
-            statusBottom.className = 'status-text';
-          }
-        }, 3000);
-      }
-    }
-
-    async function shareToWhatsApp() {
-      const statusTop = document.getElementById('db_status');
-      const statusBottom = document.getElementById('db_status_bottom');
-
-      function setStatus(text, type) {
-        if (statusTop) {
-          statusTop.textContent = text;
-          statusTop.className = 'card-note ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : '');
-        }
-        if (statusBottom) {
-          statusBottom.textContent = text;
-          statusBottom.className = 'status-text ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : '');
-        }
-      }
-
-      setStatus('Generating PDF for WhatsApp...', 'loading');
-
-      try {
-        const g = id => {
-          const el = document.getElementById(id);
-          return el ? el.value : '';
-        };
-
-        const partyNameVal = g('g_party') || 'Guest';
-        const pinoVal = g('g_pino') || 'N/A';
-        const billDateVal = formatHeaderDate(g('g_billdate'));
-
-        const { roomSub, fnbSub, liqSub } = subtotals();
-        const grandTotalVal = roomSub + fnbSub + liqSub;
-        const advVal = num(g('g_advance'));
-        const balVal = grandTotalVal - advVal;
-
-        let balanceStr = '';
-        if (Math.abs(balVal) < 0.005) {
-          balanceStr = '*Settled*';
-        } else if (balVal > 0) {
-          balanceStr = `*Balance Due:* ₹${fmt(balVal)}`;
-        } else {
-          balanceStr = `*Refund Due:* ₹${fmt(Math.abs(balVal))}`;
-        }
-
-        const messageText = `*Devka Beach Resort — Performa Invoice*\n` +
-          `-----------------------------------\n` +
-          `*PI No:* ${pinoVal}\n` +
-          `*Guest/Party:* ${partyNameVal}\n` +
-          `*Date:* ${billDateVal}\n` +
-          `*Grand Total:* ₹${fmt(grandTotalVal)}\n` +
-          `*Advance:* ₹${fmt(advVal)}\n` +
-          `${balanceStr}\n\n` +
-          `Please find the attached PDF Invoice.`;
-
-        const pdfWorker = await generatePdf(false);
-        const pdfBlob = await pdfWorker.toPdf().outputPdf('blob');
-        const partyNameClean = partyNameVal.trim().replace(/[^a-z0-9]+/gi, '_').slice(0, 40) || 'guest';
-        const filename = `Devka_Beach_Resort_Bill_${partyNameClean}.pdf`;
-
-        const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
-
-        if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-          setStatus('Sharing PDF to WhatsApp...', 'loading');
-          await navigator.share({
-            files: [pdfFile],
-            title: `Devka Beach Resort Bill — ${partyNameVal}`,
-            text: messageText
-          });
-          setStatus('Shared successfully!', 'success');
-        } else {
-          setStatus('PDF downloaded. Opening WhatsApp...', 'success');
-
-          const downloadLink = document.createElement('a');
-          downloadLink.href = URL.createObjectURL(pdfBlob);
-          downloadLink.download = filename;
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
-
-          const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(messageText)}`;
-          window.open(waUrl, '_blank');
-
-          alert('PDF generated and downloaded!\n\nOpening WhatsApp Web/Desktop. Please select your contact and attach/upload the downloaded PDF file.');
-        }
-      } catch (err) {
-        console.error('Error in WhatsApp Share: ', err);
-        setStatus('WhatsApp Share Failed: ' + err.message, 'error');
-        alert('Could not share to WhatsApp: ' + err.message);
-      } finally {
-        setTimeout(() => {
-          if (statusTop && statusTop.classList.contains('success')) {
-            statusTop.textContent = currentBillId ? 'Editing Saved Bill' : 'Ready';
-            statusTop.className = 'card-note';
-          }
-          if (statusBottom && statusBottom.classList.contains('success')) {
-            statusBottom.textContent = 'Firebase connected';
-            statusBottom.className = 'status-text';
-          }
-        }, 4000);
-      }
-    }
-
-    // ---------- Action Bindings ----------
-    document.getElementById('btnSave').addEventListener('click', saveBill);
-    document.getElementById('btnSaveBottom').addEventListener('click', saveBill);
-
-    document.getElementById('btnPrintPdf').addEventListener('click', () => {
-      downloadPdf();
-    });
-    document.getElementById('btnPrintPdfBottom').addEventListener('click', () => {
-      downloadPdf();
-    });
-
-    document.getElementById('btnWhatsAppShare').addEventListener('click', () => {
-      shareToWhatsApp();
-    });
-    document.getElementById('btnWhatsAppShareBottom').addEventListener('click', () => {
-      shareToWhatsApp();
-    });
-
-    document.getElementById('btnExport').addEventListener('click', () => {
-      exportExcel().catch(err => { console.error(err); alert('Could not generate the Excel file: ' + err.message); });
-    });
-    document.getElementById('btnExportBottom').addEventListener('click', () => {
-      exportExcel().catch(err => { console.error(err); alert('Could not generate the Excel file: ' + err.message); });
-    });
-
-    document.getElementById('db_body').addEventListener('click', e => {
-      const btn = e.target.closest('button');
-      if (!btn) return;
-      const act = btn.dataset.act;
-      const id = btn.dataset.id;
-      if (act === 'edit') {
-        loadBill(id);
-      } else if (act === 'del') {
-        deleteBill(id);
-      }
-    });
-
-    // ---------- init ----------
-    seed();
-    renderAll();
-    loadDashboard().catch(err => console.error('Initial dashboard load failed:', err));
-    }) ();
+      // ---------- init ----------
+      seed();
+      renderAll();
+      loadDashboard().catch(err => console.error('Initial dashboard load failed:', err));
+    })();
   </script>
 </body>
 
