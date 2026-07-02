@@ -1590,6 +1590,13 @@
       async function deleteBill(id) {
         if (!confirm('Are you sure you want to permanently delete this saved bill from Firebase?')) return;
         
+        const password = prompt('Enter password to confirm deletion:');
+        if (password === null) return; // user cancelled prompt
+        if (password !== '0063') {
+          alert('Incorrect password! Deletion aborted.');
+          return;
+        }
+        
         const statusTop = document.getElementById('db_status');
         if (statusTop) statusTop.textContent = 'Deleting bill...';
         
