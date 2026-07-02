@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devka Beach Resort — Bill Summary Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+  <style>
+    :root {
+      --ink: #132524;
+      --ink-soft: #3d5453;
+      --teal: #0f3d3e;
+      --teal-deep: #0a2b2c;
+      --sea: #4a7c82;
+      --sand: #faf6ee;
+      --sand-card: #ffffff;
+      --line: #e2ddd0;
+      --gold: #d8a448;
+      --gold-deep: #b5822f;
+      --coral: #e4694f;
+      --good: #2f7d5e;
+      --good-bg: #e7f3ec;
+      --bad: #b3492f;
+      --bad-bg: #fbeae5;
+      --radius: 14px;
+      --shadow: 0 1px 2px rgba(19, 37, 36, .04), 0 8px 24px -12px rgba(19, 37, 36, .18);
+      --font-display: 'Fraunces', serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(1200px 600px at 90% -10%, rgba(216, 164, 72, .10), transparent 60%),
+        radial-gradient(900px 500px at -10% 10%, rgba(74, 124, 130, .10), transparent 55%),
+        var(--sand);
+      color: var(--ink);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      padding: 0 0 80px;
+    }
+
+    ::selection {
+      background: var(--gold);
+      color: var(--teal-deep);
+    }
+
+    /* Header */
+    .topbar {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-deep) 100%);
+      color: #fdf9f0;
+      padding: 38px 28px 46px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topbar::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 14px;
+      background:
+        radial-gradient(circle at 10px 0, transparent 8px, var(--sand) 8.5px) repeat-x;
+      background-size: 20px 16px;
+    }
+
+    .topbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .brand-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin: 0 0 10px;
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: clamp(28px, 4vw, 42px);
+      margin: 0;
+      line-height: 1.05;
+    }
+
+    .brand-sub {
+      margin: 10px 0 0;
+      color: #cfe2df;
+      font-size: 14.5px;
+      max-width: 560px;
+      line-height: 1.5;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 13.5px;
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 11px 18px;
+      border: 1px solid transparent;
+      transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: var(--teal-deep);
+      box-shadow: 0 6px 18px -8px rgba(216, 164, 72, .7);
+    }
+
+    .btn-gold:hover {
+      background: #e3b25f;
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, .08);
+      color: #fdf9f0;
+      border-color: rgba(255, 255, 255, .28);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, .16);
+    }
+
+    .btn-line {
+      background: transparent;
+      color: var(--teal);
+      border: 1px solid var(--line);
+    }
+
+    .btn-line:hover {
+      border-color: var(--sea);
+      color: var(--sea);
+    }
+
+    .btn-add {
+      background: var(--teal);
+      color: #fdf9f0;
+    }
+
+    .btn-add:hover {
+      background: var(--teal-deep);
+    }
+
+    .btn-del {
+      background: transparent;
+      color: var(--bad);
+      border: none;
+      font-size: 16px;
+      padding: 4px 8px;
+      line-height: 1;
+    }
+
+    .btn-del:hover {
+      background: var(--bad-bg);
+      border-radius: 8px;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: -22px auto 0;
+      padding: 0 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .card {
+      background: var(--sand-card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px 26px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0;
+      color: var(--teal-deep);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title .tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: var(--teal);
+      color: #fdf9f0;
+      padding: 3px 9px;
+      border-radius: 100px;
+      font-weight: 600;
+    }
+
+    .card-note {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    @media (max-width:820px) {
+      .grid2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .subgrid-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--sea);
+      font-weight: 600;
+      margin: 0 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .field {
+      margin-bottom: 13px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      margin-bottom: 5px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 11px;
+      background: #fffefb;
+      transition: border-color .12s ease, box-shadow .12s ease;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--sea);
+      box-shadow: 0 0 0 3px rgba(74, 124, 130, .15);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 52px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* Tables */
+    .table-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    table.bill {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 920px;
+      font-size: 13px;
+    }
+
+    table.bill thead th {
+      background: var(--teal);
+      color: #fdf9f0;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      padding: 10px 10px;
+      text-align: left;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+    }
+
+    table.bill tbody td {
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+
+    table.bill tbody tr:hover {
+      background: #fbf8f1;
+    }
+
+    table.bill input {
+      width: 100%;
+      border: 1px solid transparent;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 6px 7px;
+      border-radius: 6px;
+      color: var(--ink);
+    }
+
+    table.bill input:hover {
+      border-color: var(--line);
+    }
+
+    table.bill input:focus {
+      outline: none;
+      border-color: var(--sea);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(74, 124, 130, .13);
+    }
+
+    table.bill input.num {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    table.bill input.txt {
+      min-width: 150px;
+    }
+
+    .computed {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      display: block;
+      padding: 6px 7px;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .computed.strong {
+      color: var(--teal-deep);
+      font-weight: 700;
+    }
+
+    td.col-del {
+      width: 34px;
+      text-align: center;
+    }
+
+    col.w-date {
+      width: 100px;
+    }
+
+    col.w-pax {
+      width: 64px;
+    }
+
+    col.w-rooms {
+      width: 64px;
+    }
+
+    col.w-rate {
+      width: 96px;
+    }
+
+    col.w-base {
+      width: 110px;
+    }
+
+    col.w-gst {
+      width: 78px;
+    }
+
+    col.w-gstamt {
+      width: 100px;
+    }
+
+    col.w-total {
+      width: 110px;
+    }
+
+    col.w-del {
+      width: 34px;
+    }
+
+    .table-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      background: #f6f1e6;
+      border-top: 1px solid var(--line);
+    }
+
+    .table-foot .label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--sea);
+      font-weight: 700;
+    }
+
+    .table-foot .value {
+      font-family: var(--font-mono);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--teal-deep);
+    }
+
+    .table-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .gst-quick {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .gst-chip {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      color: var(--ink-soft);
+    }
+
+    .gst-chip:hover {
+      border-color: var(--gold);
+      color: var(--gold-deep);
+    }
+
+    .liquor-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid #f0c9bb;
+      border-radius: 9px;
+      padding: 9px 13px;
+      font-size: 12.5px;
+      margin-bottom: 14px;
+    }
+
+    /* Summary */
+    .summary-card {
+      background: linear-gradient(180deg, #ffffff, #fdfaf3);
+      position: relative;
+    }
+
+    .summary-card::before {
+      content: "";
+      position: absolute;
+      top: -9px;
+      left: 24px;
+      right: 24px;
+      height: 18px;
+      background: radial-gradient(circle at 10px 9px, transparent 9px, #faf6ee 9.5px) repeat-x;
+      background-size: 20px 18px;
+      z-index: 1;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width:820px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sum-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .sum-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 2px;
+      border-bottom: 1px dashed var(--line);
+      font-size: 14px;
+    }
+
+    .sum-row span:first-child {
+      color: var(--ink-soft);
+    }
+
+    .sum-row span:last-child {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .sum-row.grand {
+      border-bottom: none;
+      padding-top: 16px;
+    }
+
+    .sum-row.grand span:first-child {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--teal-deep);
+    }
+
+    .sum-row.grand span:last-child {
+      font-size: 24px;
+      color: var(--teal-deep);
+    }
+
+    .balance-box {
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .balance-box.due {
+      background: var(--bad-bg);
+      border: 1px solid #f0c9bb;
+    }
+
+    .balance-box.refund {
+      background: var(--good-bg);
+      border: 1px solid #bfe0cd;
+    }
+
+    .balance-box.settled {
+      background: #f1f4f2;
+      border: 1px solid var(--line);
+    }
+
+    .balance-box .b-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .balance-box.due .b-label {
+      color: var(--bad);
+    }
+
+    .balance-box.refund .b-label {
+      color: var(--good);
+    }
+
+    .balance-box.settled .b-label {
+      color: var(--ink-soft);
+    }
+
+    .balance-box .b-value {
+      font-family: var(--font-mono);
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .balance-box.due .b-value {
+      color: var(--bad);
+    }
+
+    .balance-box.refund .b-value {
+      color: var(--good);
+    }
+
+    .balance-box.settled .b-value {
+      color: var(--ink-soft);
+    }
+
+    .adv-field {
+      margin-top: 12px;
+      max-width: 220px;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid transparent;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+    .btn-sm:active {
+      transform: translateY(1px);
+    }
+    .btn-sm-edit {
+      background: var(--gold);
+      color: var(--teal-deep);
+    }
+    .btn-sm-edit:hover {
+      background: #e3b25f;
+    }
+    .btn-sm-del {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border-color: #f0c9bb;
+    }
+    .btn-sm-del:hover {
+      background: #f8ded5;
+    }
+    .bottom-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .status-text {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      color: var(--sea);
+      margin-right: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+    .status-text.error {
+      color: var(--bad);
+    }
+    .status-text.success {
+      color: var(--good-deep);
+    }
+
+    footer.hint {
+      max-width: 1180px;
+      margin: 6px auto 0;
+      padding: 0 28px;
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <p class="brand-eyebrow">Devka Beach Resort Pvt Ltd · Billing Desk</p>
+        <h1 class="brand-title">Bill Summary Generator</h1>
+        <p class="brand-sub">Enter guest and event details once — GST on rooms &amp; F&amp;B and VAT on alcohol are
+          worked out automatically, then export a finished bill summary sheet in one click.</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" id="btnReset">↺ Start blank</button>
+        <button class="btn btn-line" id="btnSave" style="border-color: rgba(255,255,255,0.4); color: #fff;">💾 Save Bill</button>
+        <button class="btn btn-gold" id="btnExport">⬇ Download Excel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- DASHBOARD -->
+    <div class="card" id="card_dashboard">
+      <div class="card-head">
+        <h2 class="card-title"><span class="tag">DASHBOARD</span>Saved Bills</h2>
+        <span class="card-note" id="db_status">Connecting to Firebase...</span>
+      </div>
+      <div class="table-scroll" style="max-height: 280px; overflow-y: auto;">
+        <table class="bill">
+          <thead>
+            <tr>
+              <th style="width: 120px; text-align: center;">Bill Date</th>
+              <th style="width: 130px; text-align: center;">P.I. Number</th>
+              <th>Guest / Party Name</th>
+              <th style="width: 140px; text-align: right;">Grand Total</th>
+              <th style="width: 160px; text-align: center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="db_body">
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--ink-soft); padding: 24px;">
+                Loading saved bills from Firebase Firestore...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- GUEST + RESORT DETAILS -->
+    <div class="card">
+      <div class="card-head">
+        <h2 class="card-title"><span class="tag">01</span>Bill Header</h2>
+        <span class="card-note">Bill date auto-stamps today — edit if backdating.</span>
+      </div>
+      <div class="grid2">
+        <div>
+          <p class="subgrid-title">To — Guest / Party Details</p>
+          <div class="field"><label>Party Name</label><input id="g_party"
+              placeholder="e.g. Acme Corporation"></div>
+          <div class="field"><label>Address</label><textarea id="g_address"
+              placeholder="Company / guest address"></textarea></div>
+          <div class="field-row">
+            <div class="field"><label>Contact No.</label><input id="g_contact" placeholder="+91"></div>
+            <div class="field"><label>GST No. (Guest)</label><input id="g_gst" placeholder="15-digit GSTIN"></div>
+          </div>
+          <div class="field"><label>Contact Person</label><input id="g_person" placeholder="Name"></div>
+          <div class="field-row">
+            <div class="field"><label>Check-in Date</label><input id="g_checkin" type="date">
+            </div>
+            <div class="field"><label>Check-out Date</label><input id="g_checkout" type="date">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Plan</label>
+              <select id="g_plan">
+                <option>EP</option>
+                <option>CP</option>
+                <option selected>MAP</option>
+                <option>AP</option>
+              </select>
+            </div>
+            <div class="field"><label>Bill Date</label><input id="g_billdate" type="date">
+            </div>
+          </div>
+          <div class="field"><label>PI Number</label><input id="g_pino" placeholder="e.g. 2026-2027/05"></div>
+        </div>
+        <div>
+          <p class="subgrid-title">From — Resort Details</p>
+          <div class="field"><label>Resort Name</label><input id="r_name"></div>
+          <div class="field"><label>Address</label><textarea id="r_address"></textarea></div>
+          <div class="field-row">
+            <div class="field"><label>GST No. (Resort)</label><input id="r_gst"></div>
+            <div class="field"><label>Tel No.</label><input id="r_tel"></div>
+          </div>
+          <div class="field"><label>PI Validity Date</label><input id="r_pivalidity" type="date"></div>
+          <div class="field-row">
+            <div class="field"><label>Bank Name</label><input id="r_bank"></div>
+            <div class="field"><label>Account No.</label><input id="r_acct"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>IFSC Code</label><input id="r_ifsc"></div>
+            <div class="field"><label>Branch</label><input id="r_branch"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROOM CHARGES -->
+    <div class="card">
+      <div class="card-head">
+        <h2 class="card-title"><span class="tag">02</span>Room Charges</h2>
+        <span class="card-note">GST % is editable per row — use the chips or type any rate.</span>
+      </div>
+      <div class="table-scroll">
+        <table class="bill" id="tbl_room">
+          <colgroup>
+            <col class="w-date">
+            <col>
+            <col class="w-pax">
+            <col class="w-rooms">
+            <col class="w-rate">
+            <col class="w-base">
+            <col class="w-gst">
+            <col class="w-gstamt">
+            <col class="w-total">
+            <col class="w-del">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Particulars</th>
+              <th>Pax</th>
+              <th>Rooms</th>
+              <th>Rate</th>
+              <th>Base Amount</th>
+              <th>GST %</th>
+              <th>GST Amt</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbl_room_body"></tbody>
+        </table>
+      </div>
+      <div class="table-foot">
+        <span class="label">Room Charges Subtotal</span>
+        <span class="value" id="sub_room">₹0.00</span>
+      </div>
+      <div class="table-actions"><button class="btn btn-add" data-add="room">+ Add room row</button></div>
+    </div>
+
+    <!-- F&B -->
+    <div class="card">
+      <div class="card-head">
+        <h2 class="card-title"><span class="tag">03</span>Food &amp; Beverage</h2>
+        <span class="card-note">Same GST logic as rooms — set Base Amount directly for per-pax pricing.</span>
+      </div>
+      <div class="table-scroll">
+        <table class="bill" id="tbl_fnb">
+          <colgroup>
+            <col class="w-date">
+            <col>
+            <col class="w-pax">
+            <col class="w-rate">
+            <col class="w-base">
+            <col class="w-gst">
+            <col class="w-gstamt">
+            <col class="w-total">
+            <col class="w-del">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Particulars</th>
+              <th>Pax</th>
+              <th>Rate</th>
+              <th>Base Amount</th>
+              <th>GST %</th>
+              <th>GST Amt</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbl_fnb_body"></tbody>
+        </table>
+      </div>
+      <div class="table-foot">
+        <span class="label">F&amp;B Subtotal</span>
+        <span class="value" id="sub_fnb">₹0.00</span>
+      </div>
+      <div class="table-actions"><button class="btn btn-add" data-add="fnb">+ Add F&amp;B row</button></div>
+    </div>
+
+    <!-- HARD LIQUOR / VAT -->
+    <div class="card">
+      <div class="card-head">
+        <h2 class="card-title"><span class="tag">04</span>Hard Liquor — VAT</h2>
+        <span class="card-note">Taxed separately from GST — set 18% or 20% per item, or any custom VAT rate.</span>
+      </div>
+      <div class="liquor-banner">⚠ Alcohol is taxed under state VAT/excise, not GST — kept as its own table with its own
+        tax column.</div>
+      <div class="table-scroll">
+        <table class="bill" id="tbl_liq">
+          <colgroup>
+            <col class="w-date">
+            <col>
+            <col class="w-pax">
+            <col class="w-rate">
+            <col class="w-base">
+            <col class="w-gst">
+            <col class="w-gstamt">
+            <col class="w-total">
+            <col>
+            <col class="w-del">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Item Name</th>
+              <th>Qty</th>
+              <th>Rate</th>
+              <th>Amount</th>
+              <th>VAT %</th>
+              <th>VAT Amt</th>
+              <th>Net Amount</th>
+              <th>Remark</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbl_liq_body"></tbody>
+        </table>
+      </div>
+      <div class="table-foot">
+        <span class="label">Liquor Subtotal (Net)</span>
+        <span class="value" id="sub_liq">₹0.00</span>
+      </div>
+      <div class="table-actions"><button class="btn btn-add" data-add="liq">+ Add liquor row</button></div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="card summary-card">
+      <div class="card-head">
+        <h2 class="card-title"><span class="tag">05</span>Final Summary</h2>
+      </div>
+      <div class="summary-grid">
+        <div class="sum-rows">
+          <div class="sum-row"><span>Room Charges Subtotal</span><span id="s_room">₹0.00</span></div>
+          <div class="sum-row"><span>F&amp;B Subtotal</span><span id="s_fnb">₹0.00</span></div>
+          <div class="sum-row"><span>Hard Liquor Subtotal (incl. VAT)</span><span id="s_liq">₹0.00</span></div>
+          <div class="sum-row grand"><span>Grand Total</span><span id="s_grand">₹0.00</span></div>
+        </div>
+        <div class="balance-box settled" id="balanceBox">
+          <span class="b-label" id="b_label">Balance</span>
+          <span class="b-value" id="b_value">₹0.00</span>
+          <div class="adv-field field">
+            <label>Advance Received</label>
+            <input id="g_advance" class="num" type="number" step="0.01" value="0">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ACTIONS BAR -->
+    <div class="bottom-actions">
+      <div class="status-text" id="db_status_bottom">Firebase Status: Disconnected</div>
+      <button class="btn btn-ghost" id="btnResetBottom" style="border-color: var(--line); color: var(--teal-deep);">↺ Start blank</button>
+      <button class="btn btn-line" id="btnSaveBottom" style="border-color: var(--teal); color: var(--teal); background: #fffefb;">💾 Save Bill to Firebase</button>
+      <button class="btn btn-gold" id="btnExportBottom">⬇ Download Excel</button>
+    </div>
+
+  </div>
+
+  <footer class="hint">Everything here recalculates live and stays in this browser tab only. Click <strong>Download
+      Excel</strong> whenever you're ready for the final .xlsx bill summary.</footer>
+  <datalist id="particulars-list"></datalist>
+
+  <!-- Firebase Compat SDKs (compatible with file:// protocol) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      // Firebase Configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyA4M6l9yP84HXNOhqwSrruUZ3iP5O3PgWQ",
+        authDomain: "dbr-pi.firebaseapp.com",
+        projectId: "dbr-pi",
+        storageBucket: "dbr-pi.firebasestorage.app",
+        messagingSenderId: "1011664922135",
+        appId: "1:1011664922135:web:e5c9d0d7e755eeabd0de52"
+      };
+
+      // Initialize Firebase (Compat SDK)
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      let currentBillId = null;
+
+      const fmt = n => (isFinite(n) ? n : 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const money = n => '₹' + fmt(n);
+      const num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
+      const uid = (() => { let i = 0; return () => 'r' + (++i) + '_' + Date.now().toString(36); })();
+
+      // ---------- date helpers ----------
+      const getTodayDateString = () => {
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      function formatHeaderDate(dateStr) {
+        if (!dateStr) return '';
+        const parts = dateStr.split('-');
+        if (parts.length === 3 && parts[0].length === 4) {
+          const day = parseInt(parts[2], 10);
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          const month = months[parseInt(parts[1], 10) - 1] || '';
+          const year = parts[0].slice(-2);
+          return `${day}-${month}-${year}`; // e.g. "15-Jun-26"
+        }
+        return dateStr;
+      }
+
+      function formatTableDate(dateStr) {
+        if (!dateStr) return '';
+        const parts = dateStr.split('-');
+        if (parts.length === 3 && parts[0].length === 4) {
+          const day = parseInt(parts[2], 10);
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          const month = months[parseInt(parts[1], 10) - 1] || '';
+          const year = parts[0];
+          let suffix = 'th';
+          if (day === 1 || day === 21 || day === 31) suffix = 'st';
+          else if (day === 2 || day === 22) suffix = 'nd';
+          else if (day === 3 || day === 23) suffix = 'rd';
+          return `${day}${suffix} ${month.toUpperCase()} ${year}`; // e.g. "27th JUN 2026"
+        }
+        return dateStr;
+      }
+
+      // ---------- particulars memory ----------
+      const particularsMemory = new Set([
+        'Room on Double Occupancy',
+        'Room on Triple Occupancy',
+        'Room on Single Occupancy',
+        'Early Check-in Charges',
+        'Breakfast',
+        'Breakfast at time of check-in',
+        'Lunch',
+        'Buffet Lunch',
+        'Dinner',
+        'DJ',
+        'Starter',
+        'STARTER- 4VEG',
+        'Corkage Charge',
+        'Soda 750ml',
+        'Soft Drinks 2.25L',
+        'Water bottle'
+      ]);
+
+      function updateMemoryDatalist() {
+        room.forEach(r => { if (r.particulars && r.particulars.trim()) particularsMemory.add(r.particulars.trim()); });
+        fnb.forEach(r => { if (r.particulars && r.particulars.trim()) particularsMemory.add(r.particulars.trim()); });
+        liq.forEach(r => { if (r.item && r.item.trim()) particularsMemory.add(r.item.trim()); });
+        
+        const dl = document.getElementById('particulars-list');
+        if (dl) {
+          dl.innerHTML = Array.from(particularsMemory)
+            .map(val => `<option value="${esc(val)}">`)
+            .join('');
+        }
+      }
+
+      // ---------- state ----------
+      let room = [], fnb = [], liq = [];
+
+      function newRoomRow(d) { return Object.assign({ id: uid(), date: getTodayDateString(), particulars: '', pax: '', qty: '', rate: '', base: '', gst: 18 }, d || {}); }
+      function newLiqRow(d) { return Object.assign({ id: uid(), date: getTodayDateString(), item: '', qty: '', rate: '', amount: '', vat: 18, remark: '' }, d || {}); }
+
+      function seed() {
+        document.getElementById('g_party').value = '';
+        document.getElementById('g_address').value = '';
+        document.getElementById('g_contact').value = '';
+        document.getElementById('g_gst').value = '';
+        document.getElementById('g_person').value = '';
+        document.getElementById('g_checkin').value = '';
+        document.getElementById('g_checkout').value = '';
+        document.getElementById('g_plan').value = 'MAP';
+        document.getElementById('g_billdate').value = getTodayDateString();
+        document.getElementById('g_pino').value = '';
+
+        document.getElementById('r_name').value = 'Devka Beach Resort Pvt Ltd';
+        document.getElementById('r_address').value = 'Plot No. 78/7, Sea Face Road, Nani Daman, Daman – 396210';
+        document.getElementById('r_gst').value = '26AAACD1427F1Z6';
+        document.getElementById('r_tel').value = '+91 260 225 3063';
+        document.getElementById('r_pivalidity').value = '2026-09-03';
+        document.getElementById('r_bank').value = 'Axis Bank Ltd';
+        document.getElementById('r_acct').value = '921020031927686';
+        document.getElementById('r_ifsc').value = 'UTIB0000380';
+        document.getElementById('r_branch').value = 'Daman';
+
+        room = [newRoomRow()];
+        fnb = [newRoomRow({ qty: 1 })];
+        liq = [newLiqRow()];
+      }
+
+      function blank() {
+        document.querySelectorAll('.card input, .card textarea').forEach(el => {
+          if (el.id && el.id.startsWith('g_') && el.id !== 'g_advance' && el.id !== 'g_plan') {
+            el.value = '';
+          }
+        });
+        document.getElementById('g_plan').value = 'MAP';
+        document.getElementById('g_advance').value = 0;
+        room = [newRoomRow()]; fnb = [newRoomRow()]; liq = [newLiqRow()];
+        renderAll();
+      }
+
+      // ---------- row calc ----------
+      function calcRoomRow(r) {
+        const base = num(r.base);
+        const gstAmt = base * (num(r.gst) / 100);
+        const total = base + gstAmt;
+        return { gstAmt, total };
+      }
+      function calcLiqRow(r) {
+        const amount = num(r.amount);
+        const vatAmt = amount * (num(r.vat) / 100);
+        const net = amount + vatAmt;
+        return { vatAmt, net };
+      }
+
+      // ---------- render ----------
+      function roomRowHtml(r) {
+        return `<tr data-id="${r.id}">
+          <td><input class="txt" data-f="date" type="date" value="${esc(r.date)}"></td>
+          <td><input class="txt" data-f="particulars" list="particulars-list" value="${esc(r.particulars)}" placeholder="Description"></td>
+          <td><input class="num" data-f="pax" type="number" value="${esc(r.pax)}"></td>
+          <td><input class="num" data-f="qty" type="number" value="${esc(r.qty)}"></td>
+          <td><input class="num" data-f="rate" type="number" step="0.01" value="${esc(r.rate)}"></td>
+          <td><input class="num" data-f="base" type="number" step="0.01" value="${esc(r.base)}"></td>
+          <td>
+            <input class="num" data-f="gst" type="number" step="0.01" value="${esc(r.gst)}">
+            <div class="gst-quick">
+              ${[0, 5, 12, 18, 28].map(p => `<span class="gst-chip" data-gst="${p}">${p}</span>`).join('')}
+            </div>
+          </td>
+          <td><span class="computed" data-c="gstAmt"></span></td>
+          <td><span class="computed strong" data-c="total"></span></td>
+          <td class="col-del"><button class="btn-del" data-del="1" title="Remove row">✕</button></td>
+        </tr>`;
+      }
+
+      function fnbRowHtml(r) {
+        return `<tr data-id="${r.id}">
+          <td><input class="txt" data-f="date" type="date" value="${esc(r.date)}"></td>
+          <td><input class="txt" data-f="particulars" list="particulars-list" value="${esc(r.particulars)}" placeholder="Description"></td>
+          <td><input class="num" data-f="pax" type="number" value="${esc(r.pax)}"></td>
+          <td><input class="num" data-f="rate" type="number" step="0.01" value="${esc(r.rate)}"></td>
+          <td><input class="num" data-f="base" type="number" step="0.01" value="${esc(r.base)}"></td>
+          <td>
+            <input class="num" data-f="gst" type="number" step="0.01" value="${esc(r.gst)}">
+            <div class="gst-quick">
+              ${[0, 5, 12, 18, 28].map(p => `<span class="gst-chip" data-gst="${p}">${p}</span>`).join('')}
+            </div>
+          </td>
+          <td><span class="computed" data-c="gstAmt"></span></td>
+          <td><span class="computed strong" data-c="total"></span></td>
+          <td class="col-del"><button class="btn-del" data-del="1" title="Remove row">✕</button></td>
+        </tr>`;
+      }
+
+      function liqRowHtml(r) {
+        return `<tr data-id="${r.id}">
+          <td><input class="txt" data-f="date" type="date" value="${esc(r.date)}"></td>
+          <td><input class="txt" data-f="item" list="particulars-list" value="${esc(r.item)}" placeholder="Item name"></td>
+          <td><input class="num" data-f="qty" type="number" value="${esc(r.qty)}"></td>
+          <td><input class="num" data-f="rate" type="number" step="0.01" value="${esc(r.rate)}"></td>
+          <td><input class="num" data-f="amount" type="number" step="0.01" value="${esc(r.amount)}"></td>
+          <td>
+            <input class="num" data-f="vat" type="number" step="0.01" value="${esc(r.vat)}">
+            <div class="gst-quick">
+              <span class="gst-chip" data-gst="18">18</span><span class="gst-chip" data-gst="20">20</span>
+            </div>
+          </td>
+          <td><span class="computed" data-c="vatAmt"></span></td>
+          <td><span class="computed strong" data-c="net"></span></td>
+          <td><input class="txt" data-f="remark" value="${esc(r.remark)}" placeholder="Optional"></td>
+          <td class="col-del"><button class="btn-del" data-del="1" title="Remove row">✕</button></td>
+        </tr>`;
+      }
+
+      function esc(v) { return (v === undefined || v === null) ? '' : String(v).replace(/"/g, '&quot;'); }
+
+      function renderTable(kind) {
+        const body = document.getElementById(kind === 'room' ? 'tbl_room_body' : kind === 'fnb' ? 'tbl_fnb_body' : 'tbl_liq_body');
+        const arr = kind === 'room' ? room : kind === 'fnb' ? fnb : liq;
+        body.innerHTML = arr.map(r => kind === 'liq' ? liqRowHtml(r) : kind === 'fnb' ? fnbRowHtml(r) : roomRowHtml(r)).join('');
+        arr.forEach(r => updateRowComputed(kind, r));
+      }
+
+      function updateRowComputed(kind, r) {
+        const body = document.getElementById(kind === 'room' ? 'tbl_room_body' : kind === 'fnb' ? 'tbl_fnb_body' : 'tbl_liq_body');
+        const tr = body.querySelector(`tr[data-id="${r.id}"]`);
+        if (!tr) return;
+        if (kind === 'liq') {
+          const { vatAmt, net } = calcLiqRow(r);
+          tr.querySelector('[data-c="vatAmt"]').textContent = fmt(vatAmt);
+          tr.querySelector('[data-c="net"]').textContent = fmt(net);
+        } else {
+          const { gstAmt, total } = calcRoomRow(r);
+          tr.querySelector('[data-c="gstAmt"]').textContent = fmt(gstAmt);
+          tr.querySelector('[data-c="total"]').textContent = fmt(total);
+        }
+      }
+
+      function subtotals() {
+        const roomSub = room.reduce((s, r) => s + calcRoomRow(r).total, 0);
+        const fnbSub = fnb.reduce((s, r) => s + calcRoomRow(r).total, 0);
+        const liqSub = liq.reduce((s, r) => s + calcLiqRow(r).net, 0);
+        return { roomSub, fnbSub, liqSub };
+      }
+
+      function renderTotals() {
+        const { roomSub, fnbSub, liqSub } = subtotals();
+        document.getElementById('sub_room').textContent = money(roomSub);
+        document.getElementById('sub_fnb').textContent = money(fnbSub);
+        document.getElementById('sub_liq').textContent = money(liqSub);
+        document.getElementById('s_room').textContent = money(roomSub);
+        document.getElementById('s_fnb').textContent = money(fnbSub);
+        document.getElementById('s_liq').textContent = money(liqSub);
+        const grand = roomSub + fnbSub + liqSub;
+        document.getElementById('s_grand').textContent = money(grand);
+
+        const adv = num(document.getElementById('g_advance').value);
+        const bal = grand - adv;
+        const box = document.getElementById('balanceBox');
+        const lbl = document.getElementById('b_label');
+        const val = document.getElementById('b_value');
+        box.classList.remove('due', 'refund', 'settled');
+        if (Math.abs(bal) < 0.005) { box.classList.add('settled'); lbl.textContent = 'Settled'; val.textContent = money(0); }
+        else if (bal > 0) { box.classList.add('due'); lbl.textContent = 'Balance Due from Guest'; val.textContent = money(bal); }
+        else { box.classList.add('refund'); lbl.textContent = 'Refund Due to Guest'; val.textContent = money(Math.abs(bal)); }
+      }
+
+      function renderAll() { renderTable('room'); renderTable('fnb'); renderTable('liq'); renderTotals(); updateMemoryDatalist(); }
+
+      // ---------- events ----------
+      document.querySelectorAll('.table-scroll').forEach(scroll => {
+        scroll.addEventListener('input', e => {
+          const t = e.target;
+          const tr = t.closest('tr'); if (!tr) return;
+          const table = t.closest('table');
+          const kind = table.id === 'tbl_room' ? 'room' : table.id === 'tbl_fnb' ? 'fnb' : 'liq';
+          const arr = kind === 'room' ? room : kind === 'fnb' ? fnb : liq;
+          const id = tr.dataset.id;
+          const r = arr.find(x => x.id === id); if (!r) return;
+          const field = t.dataset.f;
+          if (field) {
+            r[field] = t.classList.contains('num') ? t.value : t.value;
+            
+            // Auto Calculations Formulas
+            if (kind === 'room' && (field === 'qty' || field === 'rate')) {
+              r.base = num(r.qty) * num(r.rate);
+              const baseInput = tr.querySelector('[data-f="base"]');
+              if (baseInput) baseInput.value = r.base || '';
+            } else if (kind === 'fnb' && (field === 'pax' || field === 'rate')) {
+              r.base = num(r.pax) * num(r.rate);
+              const baseInput = tr.querySelector('[data-f="base"]');
+              if (baseInput) baseInput.value = r.base || '';
+            } else if (kind === 'liq' && (field === 'qty' || field === 'rate')) {
+              r.amount = num(r.qty) * num(r.rate);
+              const amtInput = tr.querySelector('[data-f="amount"]');
+              if (amtInput) amtInput.value = r.amount || '';
+            }
+            
+            if (field === 'particulars' || field === 'item') {
+              updateMemoryDatalist();
+            }
+            
+            updateRowComputed(kind, r);
+            renderTotals();
+          }
+        });
+        scroll.addEventListener('click', e => {
+          const chip = e.target.closest('.gst-chip');
+          if (chip) {
+            const tr = chip.closest('tr'); const table = chip.closest('table');
+            const kind = table.id === 'tbl_room' ? 'room' : table.id === 'tbl_fnb' ? 'fnb' : 'liq';
+            const arr = kind === 'room' ? room : kind === 'fnb' ? fnb : liq;
+            const r = arr.find(x => x.id === tr.dataset.id);
+            const input = tr.querySelector(kind === 'liq' ? '[data-f="vat"]' : '[data-f="gst"]');
+            const v = chip.dataset.gst;
+            input.value = v; r[kind === 'liq' ? 'vat' : 'gst'] = v;
+            updateRowComputed(kind, r); renderTotals();
+            return;
+          }
+          const delBtn = e.target.closest('[data-del]');
+          if (delBtn) {
+            const tr = delBtn.closest('tr'); const table = delBtn.closest('table');
+            const kind = table.id === 'tbl_room' ? 'room' : table.id === 'tbl_fnb' ? 'fnb' : 'liq';
+            const id = tr.dataset.id;
+            if (kind === 'room') room = room.filter(x => x.id !== id);
+            else if (kind === 'fnb') fnb = fnb.filter(x => x.id !== id);
+            else liq = liq.filter(x => x.id !== id);
+            renderTable(kind); renderTotals();
+          }
+        });
+      });
+
+      document.querySelectorAll('[data-add]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const kind = btn.dataset.add;
+          if (kind === 'room') room.push(newRoomRow());
+          else if (kind === 'fnb') fnb.push(newRoomRow({ qty: 1 }));
+          else liq.push(newLiqRow());
+          renderTable(kind); renderTotals();
+        });
+      });
+
+      document.getElementById('g_advance').addEventListener('input', renderTotals);
+
+      // ---------- Reset Handlers ----------
+      const handleReset = () => {
+        if (confirm('Clear all fields and start a fresh bill?')) {
+          currentBillId = null;
+          const statusTop = document.getElementById('db_status');
+          const statusBottom = document.getElementById('db_status_bottom');
+          if (statusTop) statusTop.textContent = 'Ready';
+          if (statusBottom) statusBottom.textContent = 'Firebase connected';
+          blank();
+        }
+      };
+      document.getElementById('btnReset').addEventListener('click', handleReset);
+      document.getElementById('btnResetBottom').addEventListener('click', handleReset);
+
+      // ---------- Firebase Operations ----------
+      async function saveBill() {
+        const saveBtnTop = document.getElementById('btnSave');
+        const saveBtnBottom = document.getElementById('btnSaveBottom');
+        const statusTop = document.getElementById('db_status');
+        const statusBottom = document.getElementById('db_status_bottom');
+
+        function setStatus(text, type) {
+          if (statusTop) {
+            statusTop.textContent = text;
+            statusTop.className = 'card-note ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : '');
+          }
+          if (statusBottom) {
+            statusBottom.textContent = text;
+            statusBottom.className = 'status-text ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : '');
+          }
+        }
+
+        setStatus('Saving bill to Firebase...', 'loading');
+        if (saveBtnTop) saveBtnTop.disabled = true;
+        if (saveBtnBottom) saveBtnBottom.disabled = true;
+
+        try {
+          const getV = id => document.getElementById(id).value;
+          const billData = {
+            // Guest details
+            partyName: getV('g_party'),
+            address: getV('g_address'),
+            contact: getV('g_contact'),
+            gst: getV('g_gst'),
+            person: getV('g_person'),
+            checkin: getV('g_checkin'),
+            checkout: getV('g_checkout'),
+            plan: getV('g_plan'),
+            billdate: getV('g_billdate'),
+            pino: getV('g_pino'),
+            advance: num(getV('g_advance')),
+
+            // Resort details
+            resort: {
+              name: getV('r_name'),
+              address: getV('r_address'),
+              gst: getV('r_gst'),
+              tel: getV('r_tel'),
+              pivalidity: getV('r_pivalidity'),
+              bank: getV('r_bank'),
+              acct: getV('r_acct'),
+              ifsc: getV('r_ifsc'),
+              branch: getV('r_branch'),
+            },
+
+            // Tables
+            room: room.map(r => ({ date: r.date, particulars: r.particulars, pax: r.pax, qty: r.qty, rate: r.rate, base: r.base, gst: r.gst })),
+            fnb: fnb.map(r => ({ date: r.date, particulars: r.particulars, pax: r.pax, rate: r.rate, base: r.base, gst: r.gst })),
+            liq: liq.map(r => ({ date: r.date, item: r.item, qty: r.qty, rate: r.rate, amount: r.amount, vat: r.vat, remark: r.remark })),
+
+            // Calculated totals
+            totals: subtotals(),
+            updatedAt: new Date().toISOString()
+          };
+
+          if (currentBillId) {
+            // Update existing doc
+            await db.collection('bills').doc(currentBillId).update(billData);
+            setStatus('Bill updated successfully!', 'success');
+          } else {
+            // Add new doc
+            billData.createdAt = new Date().toISOString();
+            const docRef = await db.collection('bills').add(billData);
+            currentBillId = docRef.id;
+            setStatus('Bill saved successfully!', 'success');
+          }
+
+          // Reload the Dashboard
+          await loadDashboard();
+        } catch (err) {
+          console.error('Error saving document: ', err);
+          setStatus('Error saving bill: ' + err.message, 'error');
+        } finally {
+          if (saveBtnTop) saveBtnTop.disabled = false;
+          if (saveBtnBottom) saveBtnBottom.disabled = false;
+          setTimeout(() => {
+            if (statusTop && statusTop.classList.contains('success')) {
+              statusTop.textContent = currentBillId ? 'Editing Saved Bill' : 'Ready';
+              statusTop.className = 'card-note';
+            }
+            if (statusBottom && statusBottom.classList.contains('success')) {
+              statusBottom.textContent = 'Firebase connected';
+              statusBottom.className = 'status-text';
+            }
+          }, 3000);
+        }
+      }
+
+      async function loadDashboard() {
+        const dbBody = document.getElementById('db_body');
+        const statusTop = document.getElementById('db_status');
+        const statusBottom = document.getElementById('db_status_bottom');
+        
+        try {
+          const querySnapshot = await db.collection('bills').orderBy('billdate', 'desc').get();
+          
+          let html = '';
+          if (querySnapshot.empty) {
+            html = `<tr><td colspan="5" style="text-align: center; color: var(--ink-soft); padding: 24px;">No saved bills found in Firebase.</td></tr>`;
+          } else {
+            querySnapshot.forEach(docSnap => {
+              const data = docSnap.data();
+              const id = docSnap.id;
+              
+              // Calculate grand total from totals structure
+              const rSub = data.totals ? data.totals.roomSub : 0;
+              const fSub = data.totals ? data.totals.fnbSub : 0;
+              const lSub = data.totals ? data.totals.liqSub : 0;
+              const grand = rSub + fSub + lSub;
+              
+              const isEditingThis = id === currentBillId;
+
+              html += `<tr data-dbid="${id}" style="${isEditingThis ? 'background: #fdfaf3; border-left: 3px solid var(--gold);' : ''}">
+                <td style="text-align: center; font-variant-numeric: tabular-nums;">${esc(formatHeaderDate(data.billdate))}</td>
+                <td style="text-align: center; font-family: var(--font-mono); font-size: 12px; font-weight: 600;">${esc(data.pino)}</td>
+                <td>
+                  <div style="font-weight: 600; color: var(--teal-deep);">${esc(data.partyName)}</div>
+                  ${data.createdAt ? `<div style="font-size: 10px; color: var(--ink-soft);">Saved: ${new Date(data.createdAt).toLocaleDateString()}</div>` : ''}
+                </td>
+                <td style="text-align: right; font-weight: 700; color: var(--teal-deep); font-variant-numeric: tabular-nums;">${money(grand)}</td>
+                <td style="text-align: center;">
+                  <button class="btn-sm btn-sm-edit" data-act="edit" data-id="${id}">✏️ Edit</button>
+                  <button class="btn-sm btn-sm-del" data-act="del" data-id="${id}">✕ Delete</button>
+                </td>
+              </tr>`;
+            });
+          }
+          dbBody.innerHTML = html;
+          if (statusTop && statusTop.textContent === 'Connecting to Firebase...') {
+            statusTop.textContent = 'Ready';
+          }
+          if (statusBottom && statusBottom.textContent === 'Firebase Status: Disconnected') {
+            statusBottom.textContent = 'Firebase connected';
+          }
+        } catch (err) {
+          console.error('Error fetching dashboard: ', err);
+          if (dbBody) {
+            dbBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--bad); padding: 24px;">Failed to load dashboard: ${esc(err.message)}</td></tr>`;
+          }
+          if (statusBottom) {
+            statusBottom.textContent = 'Firebase Error: ' + err.message;
+            statusBottom.className = 'status-text error';
+          }
+        }
+      }
+
+      async function loadBill(id) {
+        const statusTop = document.getElementById('db_status');
+        if (statusTop) statusTop.textContent = 'Loading bill details...';
+        
+        try {
+          const docSnap = await db.collection('bills').doc(id).get();
+          
+          if (docSnap.exists) {
+            const data = docSnap.data();
+            currentBillId = id;
+            
+            // Populate header fields
+            const setV = (elementId, value) => {
+              const el = document.getElementById(elementId);
+              if (el) el.value = value || '';
+            };
+            
+            setV('g_party', data.partyName);
+            setV('g_address', data.address);
+            setV('g_contact', data.contact);
+            setV('g_gst', data.gst);
+            setV('g_person', data.person);
+            setV('g_checkin', data.checkin);
+            setV('g_checkout', data.checkout);
+            setV('g_plan', data.plan);
+            setV('g_billdate', data.billdate);
+            setV('g_pino', data.pino);
+            setV('g_advance', data.advance);
+            
+            if (data.resort) {
+              setV('r_name', data.resort.name);
+              setV('r_address', data.resort.address);
+              setV('r_gst', data.resort.gst);
+              setV('r_tel', data.resort.tel);
+              setV('r_pivalidity', data.resort.pivalidity);
+              setV('r_bank', data.resort.bank);
+              setV('r_acct', data.resort.acct);
+              setV('r_ifsc', data.resort.ifsc);
+              setV('r_branch', data.resort.branch);
+            }
+            
+            // Re-inflate room, fnb, liq state arrays with new UIDs
+            room = (data.room || []).map(r => newRoomRow({
+              date: r.date,
+              particulars: r.particulars,
+              pax: r.pax,
+              qty: r.qty,
+              rate: r.rate,
+              base: r.base,
+              gst: r.gst
+            }));
+            
+            fnb = (data.fnb || []).map(r => newRoomRow({
+              date: r.date,
+              particulars: r.particulars,
+              pax: r.pax,
+              qty: r.qty || 1,
+              rate: r.rate,
+              base: r.base,
+              gst: r.gst
+            }));
+            
+            liq = (data.liq || []).map(r => newLiqRow({
+              date: r.date,
+              item: r.item,
+              qty: r.qty,
+              rate: r.rate,
+              amount: r.amount,
+              vat: r.vat,
+              remark: r.remark
+            }));
+            
+            renderAll();
+            if (statusTop) statusTop.textContent = 'Editing Saved Bill';
+          } else {
+            alert('Bill not found in database!');
+          }
+        } catch (err) {
+          console.error('Error loading bill: ', err);
+          alert('Failed to load bill: ' + err.message);
+        }
+      }
+
+      async function deleteBill(id) {
+        if (!confirm('Are you sure you want to permanently delete this saved bill from Firebase?')) return;
+        
+        const statusTop = document.getElementById('db_status');
+        if (statusTop) statusTop.textContent = 'Deleting bill...';
+        
+        try {
+          await db.collection('bills').doc(id).delete();
+          
+          if (currentBillId === id) {
+            currentBillId = null;
+            blank(); // reset back to empty
+          } else {
+            await loadDashboard();
+          }
+        } catch (err) {
+          console.error('Error deleting bill: ', err);
+          alert('Failed to delete bill: ' + err.message);
+        }
+      }
+
+      // ---------- export ----------
+      async function exportExcel() {
+        const wb = new ExcelJS.Workbook();
+        const ws = wb.addWorksheet('Bill Summary', { views: [{ showGridLines: true }] });
+
+        // Set exact 9 column widths
+        ws.columns = [
+          { width: 13 }, // A: Date
+          { width: 35 }, // B: Particulars / Item Name
+          { width: 8 },  // C: Pax / Qty (liquor merged B+C)
+          { width: 9 },  // D: Rooms / Qty (liquor)
+          { width: 12 }, // E: Rate
+          { width: 15 }, // F: Base amount / Amount
+          { width: 8 },  // G: GST% / VAT%
+          { width: 12 }, // H: GST Amt / VAT Amt
+          { width: 15 }  // I: Total / Net Amount
+        ];
+
+        // Page setup for professional single-page printing
+        ws.pageSetup = {
+          paperSize: 9, // A4
+          orientation: 'portrait',
+          fitToPage: true,
+          fitToWidth: 1,
+          fitToHeight: 0, // let height expand to page 2 if rows increase significantly
+          margins: {
+            left: 0.25,
+            right: 0.25,
+            top: 0.25,
+            bottom: 0.25,
+            header: 0.0,
+            footer: 0.0
+          }
+        };
+
+        const teal = 'FF0F3D3E', gold = 'FFD8A448', sand = 'FFFAF6EE', ink = 'FF132524', line = 'FFCCCCCC';
+        const thin = { style: 'thin', color: { argb: line } };
+        const border = { top: thin, bottom: thin, left: thin, right: thin };
+
+        let row = 1;
+
+        // Helper functions
+        function writeTitle(text) {
+          ws.mergeCells(row, 1, row, 9);
+          const c = ws.getCell(row, 1);
+          c.value = text;
+          c.font = { name: 'Segoe UI', bold: true, size: 14, color: { argb: 'FFFFFFFF' } };
+          c.alignment = { vertical: 'middle', horizontal: 'center' };
+          c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: teal } };
+          ws.getRow(row).height = 32;
+
+          // border around title
+          for (let i = 1; i <= 9; i++) {
+            ws.getCell(row, i).border = border;
+          }
+          row++;
+        }
+
+        function writeHeaderRow(rowNum, leftLabel, leftText, rightLabel, rightText) {
+          // Left side: A to E
+          ws.mergeCells(rowNum, 1, rowNum, 5);
+          const leftCell = ws.getCell(rowNum, 1);
+          if (leftLabel) {
+            leftCell.value = {
+              richText: [
+                { font: { bold: true, size: 9.5, name: 'Segoe UI', color: { argb: ink } }, text: leftLabel },
+                { font: { size: 9.5, name: 'Segoe UI', color: { argb: ink } }, text: leftText || '' }
+              ]
+            };
+          } else {
+            leftCell.value = leftText || '';
+            leftCell.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+          }
+          leftCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+          // Right side: F to I
+          ws.mergeCells(rowNum, 6, rowNum, 9);
+          const rightCell = ws.getCell(rowNum, 6);
+          if (rightLabel) {
+            rightCell.value = {
+              richText: [
+                { font: { bold: true, size: 9.5, name: 'Segoe UI', color: { argb: ink } }, text: rightLabel },
+                { font: { size: 9.5, name: 'Segoe UI', color: { argb: ink } }, text: rightText || '' }
+              ]
+            };
+          } else {
+            rightCell.value = rightText || '';
+            rightCell.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+          }
+          rightCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+          // Apply borders
+          for (let col = 1; col <= 9; col++) {
+            ws.getCell(rowNum, col).border = border;
+          }
+
+          // Set row height (higher for address row 6)
+          ws.getRow(rowNum).height = (rowNum === 6) ? 36 : 20;
+        }
+
+        function sectionLabel(text) {
+          ws.mergeCells(row, 1, row, 9);
+          const c = ws.getCell(row, 1);
+          c.value = text;
+          c.font = { bold: true, size: 10.5, name: 'Segoe UI', color: { argb: teal } };
+          c.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+
+          const softTealBg = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6ECEB' } };
+          for (let col = 1; col <= 9; col++) {
+            const cell = ws.getCell(row, col);
+            cell.fill = softTealBg;
+            cell.border = border;
+          }
+          ws.getRow(row).height = 22;
+          row++;
+        }
+
+        function tableHeader(cols) {
+          cols.forEach((label, i) => {
+            const c = ws.getCell(row, i + 1);
+            c.value = label;
+            c.font = { bold: true, size: 9, name: 'Segoe UI', color: { argb: ink } };
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: gold } };
+            c.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            c.border = border;
+          });
+          ws.getRow(row).height = 24;
+          row++;
+        }
+
+        function dataRow(cells, decimalCols, integerCols, alignments) {
+          cells.forEach((val, i) => {
+            const c = ws.getCell(row, i + 1);
+            c.value = (val === '' || val === undefined || val === null) ? '' : val;
+            c.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+            c.border = border;
+
+            let align = 'left';
+            if (alignments && alignments[i]) {
+              align = alignments[i];
+            } else if (typeof val === 'number') {
+              align = 'right';
+            } else if (i === 0 || i === 6) { // Date or Tax % columns
+              align = 'center';
+            }
+            c.alignment = { vertical: 'middle', horizontal: align };
+
+            if (typeof val === 'number') {
+              if (decimalCols && decimalCols.includes(i)) {
+                c.numFmt = '#,##0.00';
+              } else if (integerCols && integerCols.includes(i)) {
+                c.numFmt = '#,##0';
+              }
+            }
+          });
+          ws.getRow(row).height = 20;
+          row++;
+        }
+
+        function subtotalRow(label, taxSub, totalSub) {
+          ws.mergeCells(row, 1, row, 7);
+          const c = ws.getCell(row, 1);
+          c.value = label;
+          c.font = { bold: true, size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+          c.alignment = { horizontal: 'right', vertical: 'middle' };
+
+          const cTax = ws.getCell(row, 8);
+          cTax.value = taxSub;
+          cTax.font = { bold: true, size: 9.5, name: 'Segoe UI', color: { argb: teal } };
+          cTax.numFmt = '#,##0.00';
+          cTax.alignment = { horizontal: 'right', vertical: 'middle' };
+
+          const cTotal = ws.getCell(row, 9);
+          cTotal.value = totalSub;
+          cTotal.font = { bold: true, size: 9.5, name: 'Segoe UI', color: { argb: teal } };
+          cTotal.numFmt = '#,##0.00';
+          cTotal.alignment = { horizontal: 'right', vertical: 'middle' };
+
+          const sandFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: sand } };
+          for (let col = 1; col <= 9; col++) {
+            const cell = ws.getCell(row, col);
+            cell.fill = sandFill;
+            cell.border = border;
+          }
+          ws.getRow(row).height = 20;
+          row++;
+        }
+
+        function liquorDataRow(r) {
+          const { vatAmt, net } = calcLiqRow(r);
+
+          const cA = ws.getCell(row, 1);
+          cA.value = formatHeaderDate(r.date);
+          cA.alignment = { vertical: 'middle', horizontal: 'center' };
+          cA.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+          cA.border = border;
+
+          ws.mergeCells(row, 2, row, 3);
+          const cB = ws.getCell(row, 2);
+          cB.value = {
+            richText: [
+              { font: { size: 9.5, name: 'Segoe UI', color: { argb: ink } }, text: r.item },
+              { font: { size: 8.5, italic: true, name: 'Segoe UI', color: { argb: 'FF666666' } }, text: r.remark ? ` (${r.remark})` : '' }
+            ]
+          };
+          cB.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+          ws.getCell(row, 2).border = border;
+          ws.getCell(row, 3).border = border;
+
+          const cD = ws.getCell(row, 4);
+          cD.value = r.qty !== '' ? num(r.qty) : '';
+          cD.numFmt = '#,##0';
+          cD.alignment = { vertical: 'middle', horizontal: 'right' };
+          cD.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+          cD.border = border;
+
+          const cE = ws.getCell(row, 5);
+          cE.value = num(r.rate) || '';
+          cE.numFmt = '#,##0.00';
+          cE.alignment = { vertical: 'middle', horizontal: 'right' };
+          cE.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+          cE.border = border;
+
+          const cF = ws.getCell(row, 6);
+          cF.value = num(r.amount);
+          cF.numFmt = '#,##0.00';
+          cF.alignment = { vertical: 'middle', horizontal: 'right' };
+          cF.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+          cF.border = border;
+
+          const cG = ws.getCell(row, 7);
+          cG.value = num(r.vat) + '%';
+          cG.alignment = { vertical: 'middle', horizontal: 'center' };
+          cG.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+          cG.border = border;
+
+          const cH = ws.getCell(row, 8);
+          cH.value = vatAmt;
+          cH.numFmt = '#,##0.00';
+          cH.alignment = { vertical: 'middle', horizontal: 'right' };
+          cH.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+          cH.border = border;
+
+          const cI = ws.getCell(row, 9);
+          cI.value = net;
+          cI.numFmt = '#,##0.00';
+          cI.alignment = { vertical: 'middle', horizontal: 'right' };
+          cI.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+          cI.border = border;
+
+          ws.getRow(row).height = 20;
+          row++;
+        }
+
+        function bigRow(label, value, fillColor, textColor) {
+          ws.mergeCells(row, 1, row, 7);
+          const c1 = ws.getCell(row, 1);
+          c1.value = label;
+          c1.font = { bold: true, size: 10.5, name: 'Segoe UI', color: { argb: textColor } };
+          c1.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fillColor } };
+          c1.alignment = { horizontal: 'right', vertical: 'middle', indent: 1 };
+
+          ws.mergeCells(row, 8, row, 9);
+          const c2 = ws.getCell(row, 8);
+          c2.value = value;
+          c2.font = { bold: true, size: 11, name: 'Segoe UI', color: { argb: textColor } };
+          c2.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fillColor } };
+          c2.numFmt = '#,##0.00';
+          c2.alignment = { horizontal: 'right', vertical: 'middle' };
+
+          for (let col = 1; col <= 9; col++) {
+            const cell = ws.getCell(row, col);
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fillColor } };
+            cell.border = border;
+          }
+
+          ws.getRow(row).height = 22;
+          row++;
+        }
+
+        const g = id => document.getElementById(id).value;
+
+        // --- 1. Write Header ---
+        writeTitle('PERFORMA INVOICE');
+
+        // Rows 2 to 14
+        writeHeaderRow(2, 'DATE: ', formatHeaderDate(g('g_billdate')), '', '');
+        writeHeaderRow(3, 'P.I. No: ', g('g_pino'), '', '');
+        writeHeaderRow(4, 'To,', '', 'From,', '');
+        writeHeaderRow(5, 'PARTY NAME: ', g('g_party'), '', g('r_name'));
+        writeHeaderRow(6, 'ADDRESS: ', g('g_address'), '', g('r_address'));
+        writeHeaderRow(7, '', '', 'GST NO: ', g('r_gst'));
+        writeHeaderRow(8, 'CONTACT NO.: ', g('g_contact'), 'TEL. NO: ', g('r_tel'));
+        writeHeaderRow(9, 'GST No. ', g('g_gst'), 'PI VALIDITY DT: ', formatHeaderDate(g('r_pivalidity')));
+        writeHeaderRow(10, 'CONTACT PERSON: ', g('g_person'), 'BANK DETAILS:', '');
+        writeHeaderRow(11, 'Check In dt: ', formatHeaderDate(g('g_checkin')), 'BANK NAME: ', g('r_bank'));
+        writeHeaderRow(12, 'Check Out dt: ', formatHeaderDate(g('g_checkout')), 'ACCOUNT NO. ', g('r_acct'));
+        writeHeaderRow(13, 'PLAN : ', g('g_plan'), 'IFSC CODE: ', g('r_ifsc'));
+        writeHeaderRow(14, '', '', 'BRANCH: ', g('r_branch'));
+
+        row = 15; // Set starting row for spacing
+        ws.getRow(row).height = 12;
+        row++;
+
+        // --- 2. Filter Active Data ---
+        const activeRooms = room.filter(r => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
+        const activeFnbs = fnb.filter(r => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
+        const activeLiqs = liq.filter(r => (r.item || '').trim() !== '' || num(r.amount) !== 0);
+
+        let hasRooms = activeRooms.length > 0;
+        let hasFnbs = activeFnbs.length > 0;
+        let hasLiqs = activeLiqs.length > 0;
+
+        if (!hasRooms && !hasFnbs && !hasLiqs) {
+          hasRooms = true; // render Rooms as fallback
+        }
+
+        let grandGst = 0, grandTotal = 0;
+        let sections = [];
+
+        // --- 3. Render Sections ---
+        if (hasRooms) {
+          sections.push('A');
+          sectionLabel('ROOM CHARGES (GST)');
+          tableHeader(['DATE', 'Particulars', 'PAX', 'ROOMS', 'Rate', 'Base Room Rate / Pax rate', 'GST', 'GST Amount', 'Total']);
+
+          let subGst = 0, subTotal = 0;
+          const list = activeRooms.length > 0 ? activeRooms : [newRoomRow()];
+          list.forEach(r => {
+            const { gstAmt, total } = calcRoomRow(r);
+            subGst += gstAmt;
+            subTotal += total;
+
+            dataRow([
+              formatTableDate(r.date),
+              r.particulars,
+              r.pax !== '' ? num(r.pax) : '',
+              r.qty !== '' ? num(r.qty) : '',
+              num(r.rate) || '',
+              num(r.base),
+              num(r.gst) + '%',
+              gstAmt,
+              total
+            ], [4, 5, 7, 8], [2, 3], ['center', 'left', 'right', 'right', 'right', 'right', 'center', 'right', 'right']);
+          });
+
+          subtotalRow('TOTAL', subGst, subTotal);
+          grandGst += subGst;
+          grandTotal += subTotal;
+
+          ws.getRow(row).height = 12;
+          row++;
+        }
+
+        if (hasFnbs) {
+          sections.push('B');
+          sectionLabel('FOOD & BEVERAGE (GST)');
+          tableHeader(['DATE', 'Particulars', 'PAX', '', 'RATE', 'Base Room Rate / Pax rate', 'GST', 'GST Amount', 'Total']);
+
+          let subGst = 0, subTotal = 0;
+          const list = activeFnbs.length > 0 ? activeFnbs : [newRoomRow()];
+          list.forEach(r => {
+            const { gstAmt, total } = calcRoomRow(r);
+            subGst += gstAmt;
+            subTotal += total;
+
+            dataRow([
+              formatTableDate(r.date),
+              r.particulars,
+              r.pax !== '' ? num(r.pax) : '',
+              '', // Cover/Qty removed
+              num(r.rate) || '',
+              num(r.base),
+              num(r.gst) + '%',
+              gstAmt,
+              total
+            ], [4, 5, 7, 8], [2, 3], ['center', 'left', 'right', 'right', 'right', 'right', 'center', 'right', 'right']);
+          });
+
+          subtotalRow('TOTAL', subGst, subTotal);
+          grandGst += subGst;
+          grandTotal += subTotal;
+
+          ws.getRow(row).height = 12;
+          row++;
+        }
+
+        if (hasLiqs) {
+          sections.push('C');
+          sectionLabel('HARD LIQUOR — VAT ON ALCOHOL');
+
+          ws.mergeCells(row, 2, row, 3);
+          const headers = ['DATE', 'Item Name', '', 'Qty', 'Rate', 'Amount', 'VAT %', 'VAT Amt', 'Net Amount'];
+          headers.forEach((label, i) => {
+            if (i === 2) return;
+            const c = ws.getCell(row, i + 1);
+            c.value = label;
+            c.font = { bold: true, size: 9, name: 'Segoe UI', color: { argb: ink } };
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: gold } };
+            c.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            c.border = border;
+          });
+          ws.getCell(row, 3).border = border;
+          ws.getCell(row, 3).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: gold } };
+
+          ws.getRow(row).height = 24;
+          row++;
+
+          let subVat = 0, subNet = 0;
+          const list = activeLiqs.length > 0 ? activeLiqs : [newLiqRow()];
+          list.forEach(r => {
+            const { vatAmt, net } = calcLiqRow(r);
+            subVat += vatAmt;
+            subNet += net;
+            liquorDataRow(r);
+          });
+
+          subtotalRow('TOTAL', subVat, subNet);
+          grandGst += subVat;
+          grandTotal += subNet;
+
+          ws.getRow(row).height = 12;
+          row++;
+        }
+
+        // --- 4. Render Combined Total Row ---
+        const totalLabel = `TOTAL (${sections.join('+')})`;
+        ws.mergeCells(row, 1, row, 7);
+        const cLabel = ws.getCell(row, 1);
+        cLabel.value = totalLabel;
+        cLabel.font = { bold: true, size: 10, name: 'Segoe UI', color: { argb: ink } };
+        cLabel.alignment = { horizontal: 'right', vertical: 'middle' };
+
+        const cTax = ws.getCell(row, 8);
+        cTax.value = grandGst;
+        cTax.font = { bold: true, size: 10.5, name: 'Segoe UI', color: { argb: teal } };
+        cTax.numFmt = '#,##0.00';
+        cTax.alignment = { horizontal: 'right', vertical: 'middle' };
+
+        const cTotal = ws.getCell(row, 9);
+        cTotal.value = grandTotal;
+        cTotal.font = { bold: true, size: 10.5, name: 'Segoe UI', color: { argb: teal } };
+        cTotal.numFmt = '#,##0.00';
+        cTotal.alignment = { horizontal: 'right', vertical: 'middle' };
+
+        const sandFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: sand } };
+        for (let col = 1; col <= 9; col++) {
+          const cell = ws.getCell(row, col);
+          cell.fill = sandFill;
+          cell.border = {
+            top: border.top,
+            bottom: { style: 'double', color: { argb: teal } },
+            left: border.left,
+            right: border.right
+          };
+        }
+        ws.getRow(row).height = 22;
+        row++;
+
+        ws.getRow(row).height = 12;
+        row++;
+
+        // --- 5. Render Grand Summary Blocks ---
+        const adv = num(g('g_advance'));
+        const bal = grandTotal - adv;
+
+        bigRow('GRAND TOTAL', grandTotal, teal, 'FFFFFFFF');
+        bigRow('ADVANCE RECEIVED', adv, 'FFE2DDD0', ink);
+
+        let balColor = 'FFFBEAE5'; // light red
+        let balTextColor = 'FFB3492F'; // red text
+        let balLabel = 'BALANCE DUE FROM GUEST';
+
+        if (Math.abs(bal) < 0.005) {
+          balColor = 'FFF1F4F2'; // light gray
+          balTextColor = 'FF555555';
+          balLabel = 'SETTLED';
+        } else if (bal < 0) {
+          balColor = 'FFE7F3EC'; // light green
+          balTextColor = 'FF2F7D5E';
+          balLabel = 'REFUND DUE TO GUEST';
+        }
+
+        bigRow(balLabel, Math.abs(bal), balColor, balTextColor);
+
+        // --- 6. Write Buffer & Download ---
+        const buf = await wb.xlsx.writeBuffer();
+        const blob = new Blob([buf], { type: 'application/octet-stream' });
+        const a = document.createElement('a');
+        const partyName = (g('g_party') || 'guest').trim().replace(/[^a-z0-9]+/gi, '_').slice(0, 40) || 'guest';
+        a.href = URL.createObjectURL(blob);
+        a.download = `Devka_Beach_Resort_Bill_${partyName}.xlsx`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      }
+
+      // ---------- Action Bindings ----------
+      document.getElementById('btnSave').addEventListener('click', saveBill);
+      document.getElementById('btnSaveBottom').addEventListener('click', saveBill);
+
+      document.getElementById('btnExport').addEventListener('click', () => {
+        exportExcel().catch(err => { console.error(err); alert('Could not generate the Excel file: ' + err.message); });
+      });
+      document.getElementById('btnExportBottom').addEventListener('click', () => {
+        exportExcel().catch(err => { console.error(err); alert('Could not generate the Excel file: ' + err.message); });
+      });
+
+      document.getElementById('db_body').addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const act = btn.dataset.act;
+        const id = btn.dataset.id;
+        if (act === 'edit') {
+          loadBill(id);
+        } else if (act === 'del') {
+          deleteBill(id);
+        }
+      });
+
+      // ---------- init ----------
+      seed();
+      renderAll();
+      loadDashboard().catch(err => console.error('Initial dashboard load failed:', err));
+    })();
+  </script>
+</body>
+
+</html>
