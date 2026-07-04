@@ -11,6 +11,7 @@
     rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
   <style>
     :root {
       --ink: #132524;
@@ -1050,7 +1051,7 @@
       
       <div style="margin-bottom: 20px; display: flex; gap: 10px;">
         <button class="btn btn-add" id="btnAutofillFP">⚡ Autofill &amp; Sync from PI</button>
-        <button class="btn btn-fp" id="btnFPDownloadPdf">📄 Download FP PDF</button>
+        <button class="btn btn-fp" id="btnFPDownloadPdf">📝 Download FP Word (.docx)</button>
       </div>
 
       <div class="grid2">
@@ -3194,27 +3195,364 @@
         }
       }
 
-      async function downloadFpPdf() {
+      async function downloadFpDocx() {
         const statusTop    = document.getElementById('db_status');
         const statusBottom = document.getElementById('db_status_bottom');
         function setStatus(text, type) {
           if (statusTop)    { statusTop.textContent = text;    statusTop.className    = 'card-note ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
           if (statusBottom) { statusBottom.textContent = text; statusBottom.className = 'status-text ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
         }
-        
-        setStatus('Generating FP PDF...', 'loading');
+
+        setStatus('Generating FP Word file...', 'loading');
         try {
-          const { blob, partyFilename } = await generateFpPdfBlob();
+          if (typeof docx === 'undefined') throw new Error('docx library not loaded. Please check your internet connection.');
+
+          const g = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+
+          const guestName     = g('g_party')           || 'N/A';
+          const contact       = g('g_contact')         || 'N/A';
+          const checkin       = formatHeaderDate(g('g_checkin'))  || 'N/A';
+          const checkout      = formatHeaderDate(g('g_checkout')) || 'N/A';
+          const rooms         = g('fp_rooms_details')  || 'N/A';
+          const pax           = g('fp_pax')            || 'N/A';
+          const functionType  = g('fp_function_type')  || 'GETTOGETHER';
+          const venue         = g('fp_venue')          || 'CHICURRY';
+          const roomSharing   = g('fp_room_sharing')   || 'N/A';
+          const fo            = g('fp_fo_instruction') || 'N/A';
+          const fnb           = g('fp_fnb_instruction')|| 'N/A';
+          const hk            = g('fp_hk_instruction') || 'N/A';
+          const eng           = g('fp_eng_instruction')|| 'N/A';
+          const ac            = g('fp_accounts_instruction') || 'N/A';
+          const lunchTime     = g('fp_lunch_time')     || '';
+          const hiteaTime     = g('fp_hitea_time')     || '';
+          const dinnerTime    = g('fp_dinner_time')    || '';
+
+          const partyFilename = guestName.trim().replace(/[^a-z0-9]+/gi, '_').slice(0, 40) || 'guest';
+
+          const {
+            Document, Packer, Paragraph, Table, TableRow, TableCell,
+            TextRun, HeadingLevel, AlignmentType, WidthType, BorderStyle,
+            ShadingType, VerticalAlign, PageOrientation
+          } = docx;
+
+          // ── helper to make a border object ──
+          const border = (sz = 6, color = '132524') => ({ style: BorderStyle.SINGLE, size: sz, color });
+          const goldBorder = (sz = 18) => ({ style: BorderStyle.SINGLE, size: sz, color: 'D8A448' });
+          const cellBorders = { top: border(), bottom: border(), left: border(), right: border() };
+
+          // ── helper: label+value row ──
+          const labelValueRow = (label, value, boldValue = false) => new TableRow({
+            children: [
+              new TableCell({
+                width: { size: 35, type: WidthType.PERCENTAGE },
+                borders: cellBorders,
+                shading: { type: ShadingType.SOLID, color: 'FBF8F1' },
+                verticalAlign: VerticalAlign.CENTER,
+                children: [new Paragraph({
+                  children: [new TextRun({ text: label, bold: true, size: 20, font: 'Calibri' })],
+                  spacing: { before: 60, after: 60 }
+                })]
+              }),
+              new TableCell({
+                width: { size: 65, type: WidthType.PERCENTAGE },
+                borders: cellBorders,
+                verticalAlign: VerticalAlign.CENTER,
+                children: [new Paragraph({
+                  children: [new TextRun({ text: value, bold: boldValue, size: 20, font: 'Calibri' })],
+                  spacing: { before: 60, after: 60 }
+                })]
+              })
+            ]
+          });
+
+          // ── helper: multi-line label+value row (splits by newline) ──
+          const multiLineRow = (label, value) => new TableRow({
+            children: [
+              new TableCell({
+                width: { size: 35, type: WidthType.PERCENTAGE },
+                borders: cellBorders,
+                shading: { type: ShadingType.SOLID, color: 'FBF8F1' },
+                verticalAlign: VerticalAlign.TOP,
+                children: [new Paragraph({
+                  children: [new TextRun({ text: label, bold: true, size: 20, font: 'Calibri' })],
+                  spacing: { before: 60, after: 60 }
+                })]
+              }),
+              new TableCell({
+                width: { size: 65, type: WidthType.PERCENTAGE },
+                borders: cellBorders,
+                shading: { type: ShadingType.SOLID, color: 'FFFFF2' },
+                verticalAlign: VerticalAlign.TOP,
+                children: value.split('\n').map(line => new Paragraph({
+                  children: [new TextRun({ text: line.trim(), size: 20, font: 'Courier New' })],
+                  spacing: { before: 30, after: 30 }
+                }))
+              })
+            ]
+          });
+
+          // ── helper: centered heading paragraph ──
+          const centeredBold = (text, sz = 22, color = '132524') => new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 80, after: 80 },
+            children: [new TextRun({ text, bold: true, size: sz, color, font: 'Calibri' })]
+          });
+
+          const spacer = (lines = 1) => Array.from({ length: lines }, () =>
+            new Paragraph({ children: [new TextRun({ text: '' })], spacing: { before: 40, after: 40 } })
+          );
+
+          // ═══════════════════════════════════════
+          //  PAGE 1 — Core FP Details
+          // ═══════════════════════════════════════
+
+          const mainTable = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [
+              labelValueRow('GUEST NAME / COMPANY NAME', guestName.toUpperCase(), true),
+              labelValueRow('CONTACT NUMBER', contact),
+              labelValueRow('DATE OF CHECK-IN', checkin),
+              labelValueRow('DATE OF CHECKOUT', checkout),
+              multiLineRow('NO OF ROOMS', rooms),
+              labelValueRow('NUMBER OF PAX', pax),
+              labelValueRow('TYPE OF FUNCTION', functionType.toUpperCase(), true),
+              labelValueRow('VENUE', venue.toUpperCase(), true),
+              multiLineRow('ROOM RATE SHARING', roomSharing)
+            ]
+          });
+
+          // Department instructions two-column table
+          const noteLines = [
+            { label: 'FO', val: fo },
+            { label: 'F&B', val: fnb },
+            { label: 'HK', val: hk },
+            { label: 'ENG', val: eng },
+            { label: 'AC', val: ac }
+          ];
+          const mealLines = [
+            `LUNCH  : ${venue.toUpperCase()}  ${lunchTime}`,
+            `HI-TEA : ${venue.toUpperCase()}  ${hiteaTime}`,
+            `DINNER : ${venue.toUpperCase()}  ${dinnerTime}`
+          ];
+
+          const instructionsTable = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [new TableRow({
+              children: [
+                new TableCell({
+                  width: { size: 55, type: WidthType.PERCENTAGE },
+                  borders: cellBorders,
+                  verticalAlign: VerticalAlign.TOP,
+                  children: [
+                    new Paragraph({
+                      children: [new TextRun({ text: 'NOTE :', bold: true, underline: {}, size: 20, font: 'Calibri' })],
+                      spacing: { before: 60, after: 60 }
+                    }),
+                    ...noteLines.map(nl => new Paragraph({
+                      children: [
+                        new TextRun({ text: `${nl.label} : `, bold: true, size: 20, font: 'Calibri' }),
+                        new TextRun({ text: nl.val, size: 20, font: 'Calibri' })
+                      ],
+                      spacing: { before: 40, after: 40 }
+                    }))
+                  ]
+                }),
+                new TableCell({
+                  width: { size: 45, type: WidthType.PERCENTAGE },
+                  borders: cellBorders,
+                  verticalAlign: VerticalAlign.TOP,
+                  children: mealLines.map(line => new Paragraph({
+                    children: [new TextRun({ text: line, size: 20, font: 'Courier New' })],
+                    spacing: { before: 60, after: 60 }
+                  }))
+                })
+              ]
+            })]
+          });
+
+          // ═══════════════════════════════════════
+          //  PAGE 2 — Menu Grid
+          // ═══════════════════════════════════════
+
+          const menuJSON = buildMenuJSON();
+
+          const activeCategories = FP_CATEGORIES.filter(cat =>
+            menuJSON.lunch[cat].length > 0 ||
+            menuJSON.hitea[cat].length > 0 ||
+            menuJSON.dinner[cat].length > 0
+          );
+
+          const headerRow = new TableRow({
+            tableHeader: true,
+            children: ['ITEM', 'LUNCH', 'HI-TEA', 'DINNER'].map(h => new TableCell({
+              borders: cellBorders,
+              shading: { type: ShadingType.SOLID, color: 'E2DDD0' },
+              children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [new TextRun({ text: h, bold: true, size: 20, font: 'Calibri' })],
+                spacing: { before: 80, after: 80 }
+              })]
+            }))
+          });
+
+          const menuBodyRows = activeCategories.length > 0
+            ? activeCategories.map(cat => {
+                const maxCount = Math.max(
+                  menuJSON.lunch[cat].length,
+                  menuJSON.hitea[cat].length,
+                  menuJSON.dinner[cat].length
+                );
+                let displayCategory = cat.toUpperCase();
+                if (maxCount > 0 && cat !== 'Indian Bread' && cat !== 'Special Items') {
+                  displayCategory = `${maxCount} ${displayCategory}`;
+                } else if (cat === 'Indian Bread') {
+                  displayCategory = 'ASSORTED INDIAN BREADS';
+                }
+
+                const makeMenuCell = (items, shade = 'FFFFFF') => new TableCell({
+                  borders: cellBorders,
+                  shading: items.length ? { type: ShadingType.CLEAR, color: shade } : undefined,
+                  children: items.length
+                    ? items.map(item => new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [new TextRun({ text: item.toUpperCase(), size: 18, font: 'Calibri' })],
+                        spacing: { before: 40, after: 40 }
+                      }))
+                    : [new Paragraph({ children: [new TextRun({ text: '' })] })]
+                });
+
+                return new TableRow({
+                  children: [
+                    new TableCell({
+                      borders: cellBorders,
+                      shading: { type: ShadingType.SOLID, color: 'FAF6EE' },
+                      children: [new Paragraph({
+                        children: [new TextRun({ text: displayCategory, bold: true, size: 19, font: 'Calibri' })],
+                        spacing: { before: 60, after: 60 }
+                      })]
+                    }),
+                    makeMenuCell(menuJSON.lunch[cat]),
+                    makeMenuCell(menuJSON.hitea[cat]),
+                    makeMenuCell(menuJSON.dinner[cat])
+                  ]
+                });
+              })
+            : [new TableRow({
+                children: [new TableCell({
+                  columnSpan: 4,
+                  borders: cellBorders,
+                  children: [new Paragraph({
+                    alignment: AlignmentType.CENTER,
+                    children: [new TextRun({ text: 'No menu items defined.', italics: true, size: 20, font: 'Calibri', color: '888888' })]
+                  })]
+                })]
+              })];
+
+          const menuTable = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [headerRow, ...menuBodyRows]
+          });
+
+          // ── Footer lines ──
+          const footerContent = [
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              border: { top: { style: BorderStyle.SINGLE, size: 6, color: 'E2DDD0' } },
+              spacing: { before: 200, after: 40 },
+              children: [new TextRun({ text: 'DEVKA BEACH RESORT', bold: true, size: 22, color: 'D8A448', font: 'Calibri' })]
+            }),
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 40, after: 40 },
+              children: [new TextRun({ text: 'Plot No. 78/7, Sea Face Road, Nani Daman – Daman - 396210', size: 16, color: '3D5453', font: 'Calibri' })]
+            }),
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 40, after: 40 },
+              children: [new TextRun({ text: 'M: 8600530448 / 7861813909  |  Tel: +91 260 225 3063  |  www.devkabeachresort.com', size: 16, color: '3D5453', font: 'Calibri' })]
+            })
+          ];
+
+          // ── Assemble Document ──
+          const doc = new Document({
+            sections: [{
+              properties: {
+                page: {
+                  margin: { top: 720, bottom: 720, left: 900, right: 900 }
+                }
+              },
+              children: [
+                // ─── Page 1 Header ───
+                new Paragraph({
+                  alignment: AlignmentType.CENTER,
+                  spacing: { before: 0, after: 60 },
+                  children: [new TextRun({ text: 'DEVKA BEACH RESORT', bold: true, size: 32, color: 'D8A448', font: 'Calibri' })]
+                }),
+                new Paragraph({
+                  alignment: AlignmentType.CENTER,
+                  spacing: { before: 0, after: 160 },
+                  children: [new TextRun({ text: 'Hospitality at its best', italics: true, size: 18, color: '3D5453', font: 'Calibri' })]
+                }),
+                new Paragraph({
+                  alignment: AlignmentType.CENTER,
+                  spacing: { before: 0, after: 160 },
+                  children: [new TextRun({ text: 'FP FOR INTERNAL PURPOSE ONLY', bold: true, underline: {}, size: 24, font: 'Calibri' })]
+                }),
+
+                // ─── Main Details Table ───
+                mainTable,
+                ...spacer(1),
+
+                // ─── Instructions + Meal Timings ───
+                instructionsTable,
+
+                // ─── Footer ───
+                ...footerContent,
+
+                // ─── Page Break ───
+                new Paragraph({
+                  pageBreakBefore: true,
+                  children: [new TextRun({ text: '' })]
+                }),
+
+                // ─── Page 2 Header ───
+                new Paragraph({
+                  alignment: AlignmentType.CENTER,
+                  spacing: { before: 0, after: 60 },
+                  children: [new TextRun({ text: 'DEVKA BEACH RESORT', bold: true, size: 32, color: 'D8A448', font: 'Calibri' })]
+                }),
+                new Paragraph({
+                  alignment: AlignmentType.CENTER,
+                  spacing: { before: 0, after: 160 },
+                  children: [new TextRun({ text: 'Hospitality at its best', italics: true, size: 18, color: '3D5453', font: 'Calibri' })]
+                }),
+                new Paragraph({
+                  alignment: AlignmentType.CENTER,
+                  spacing: { before: 0, after: 160 },
+                  children: [new TextRun({ text: '— NON VEG MENU —', bold: true, size: 24, color: '132524', font: 'Calibri' })]
+                }),
+
+                // ─── Menu Table ───
+                menuTable,
+
+                // ─── Footer ───
+                ...footerContent
+              ]
+            }]
+          });
+
+          const blob = await Packer.toBlob(doc);
           const a = document.createElement('a');
           a.href = URL.createObjectURL(blob);
-          a.download = `Devka_Resort_FP_${partyFilename}.pdf`;
+          a.download = `Devka_Resort_FP_${partyFilename}.docx`;
           document.body.appendChild(a); a.click(); document.body.removeChild(a);
           URL.revokeObjectURL(a.href);
-          setStatus('FP PDF downloaded!', 'success');
+          setStatus('FP Word file downloaded!', 'success');
+
         } catch (err) {
-          console.error('FP PDF error:', err);
-          setStatus('FP PDF failed: ' + err.message, 'error');
-          alert('Could not generate FP PDF: ' + err.message);
+          console.error('FP DOCX error:', err);
+          setStatus('FP Word failed: ' + err.message, 'error');
+          alert('Could not generate FP Word file:\n' + err.message);
         } finally {
           setTimeout(() => {
             if (statusTop    && statusTop.classList.contains('success'))    { statusTop.textContent = currentBillId ? 'Editing Saved Bill' : 'Ready'; statusTop.className = 'card-note'; }
@@ -3231,7 +3569,7 @@
         autofillFP();
       });
       document.getElementById('btnFPDownloadPdf').addEventListener('click', () => {
-        downloadFpPdf();
+        downloadFpDocx();
       });
       document.getElementById('fp_lunch_menu').addEventListener('input', renderMenuPreview);
       document.getElementById('fp_hitea_menu').addEventListener('input', renderMenuPreview);
