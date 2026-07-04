@@ -10,6 +10,7 @@
     href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap"
     rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --ink: #132524;
@@ -189,6 +190,14 @@
     .btn-del:hover {
       background: var(--bad-bg);
       border-radius: 8px;
+    }
+    .btn-whatsapp {
+      background: #25D366;
+      color: #fff !important;
+      box-shadow: 0 6px 18px -8px rgba(37, 211, 102, .7);
+    }
+    .btn-whatsapp:hover {
+      background: #128C7E;
     }
 
     .wrap {
@@ -702,6 +711,60 @@
       color: var(--good-deep);
     }
 
+    /* FP Section Styles */
+    .menu-preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 13px;
+      background: #fffefb;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .menu-preview-table th {
+      background: var(--teal);
+      color: #fdf9f0;
+      font-weight: 600;
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+    }
+    .menu-preview-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    .menu-preview-table tr:last-child td {
+      border-bottom: none;
+    }
+    .menu-preview-table .category-cell {
+      font-weight: 700;
+      color: var(--teal-deep);
+      background: #fbf8f1;
+      width: 180px;
+    }
+    .menu-preview-table ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+    .menu-preview-table li {
+      margin-bottom: 3px;
+    }
+    .menu-preview-table .empty-cell {
+      color: var(--ink-soft);
+      font-style: italic;
+    }
+    
+    .btn-fp {
+      background: var(--sea);
+      color: #fdf9f0;
+      box-shadow: 0 6px 18px -8px rgba(74, 124, 130, .7);
+    }
+    .btn-fp:hover {
+      background: var(--teal);
+    }
+
     footer.hint {
       max-width: 1180px;
       margin: 6px auto 0;
@@ -726,7 +789,10 @@
       <div class="topbar-actions">
         <button class="btn btn-ghost" id="btnReset">↺ Start blank</button>
         <button class="btn btn-line" id="btnSave" style="border-color: rgba(255,255,255,0.4); color: #fff;">💾 Save Bill</button>
+        
+        <button class="btn btn-line" id="btnPrintPdf" style="border-color: rgba(255,255,255,0.4); color: #fff;">📄 Download PDF</button>
         <button class="btn btn-gold" id="btnExport">⬇ Download Excel</button>
+        <button class="btn btn-whatsapp" id="btnWhatsAppShare"><svg viewBox="0 0 448 512" width="15" height="15" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L32 503l141.1-37c32.6 17.8 69 27.2 106.4 27.2 122.4 0 222-99.6 222-222 0-59.3-23.2-115-65.1-157.1zM223.9 474c-33.2 0-65.7-8.9-94-25.7l-6.7-4-83.9 22 22.4-81.8-4.4-7C38.3 344 26 303.4 26 261.9c0-109.2 88.8-198 198-198 52.9 0 102.7 20.6 140 57.9 37.3 37.3 57.9 87.1 57.9 140 0 109.2-88.8 198-198 198zm108.3-148c-5.9-3-35-17.3-40.5-19.3-5.5-2-9.6-3-13.7 3-4.1 6-16 20.2-19.6 24.2-3.6 4-7.2 4.5-13.1 1.5-31.1-15.6-53.1-28.7-74.1-64.8-5.5-9.6 5.5-8.9 15.8-29.4 1.7-3.5.8-6.5-.4-9.5-1.2-3-11-26.5-15.1-36.4-4-9.7-8-8.4-11-8.5-2.8-.1-6.1-.1-9.4-.1s-8.7 1.2-13.2 6.1c-4.5 4.9-17.3 16.9-17.3 41.2s17.7 47.8 20.2 51.2c2.5 3.4 34.9 53.3 84.7 74.8 11.8 5.1 21.1 8.2 28.3 10.5 11.9 3.8 22.7 3.2 31.3 2 9.6-1.3 29.5-12 33.6-23.6 4.1-11.6 4.1-21.6 2.9-23.6-1.2-2-4.5-3-10.4-6z"/></svg>Share WhatsApp</button>
       </div>
     </div>
   </div>
@@ -975,19 +1041,106 @@
       </div>
     </div>
 
+    <!-- 06 FUNCTION PROSPECTUS (FP) DETAILS -->
+    <div class="card" id="card_fp">
+      <div class="card-head">
+        <h2 class="card-title"><span class="tag">06</span>Function Prospectus (FP)</h2>
+        <span class="card-note">Fill details to auto-generate the Internal FP document.</span>
+      </div>
+      
+      <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+        <button class="btn btn-add" id="btnAutofillFP">⚡ Autofill &amp; Sync from PI</button>
+        <button class="btn btn-fp" id="btnFPDownloadPdf">📄 Download FP PDF</button>
+      </div>
+
+      <div class="grid2">
+        <div>
+          <p class="subgrid-title">Function details &amp; Room Sharing</p>
+          <div class="field-row" style="grid-template-columns: 1fr 1fr 1fr;">
+            <div class="field"><label>Function Type</label><input id="fp_function_type" placeholder="e.g. GETTOGETHER" value="GETTOGETHER"></div>
+            <div class="field"><label>Venue</label><input id="fp_venue" placeholder="e.g. CHICURRY" value="CHICURRY"></div>
+            <div class="field"><label>Number of Pax</label><input id="fp_pax" type="number" placeholder="e.g. 14"></div>
+          </div>
+          <div class="field"><label>No of Rooms (Text summary)</label><textarea id="fp_rooms_details" placeholder="Auto-populated from Room table" rows="3"></textarea></div>
+          <div class="field"><label>Room Rate Sharing Details</label><textarea id="fp_room_sharing" placeholder="Auto-populated from Room table rates" rows="6"></textarea></div>
+          
+          <p class="subgrid-title" style="margin-top: 20px;">Meal Schedule (Timings)</p>
+          <div class="field-row">
+            <div class="field"><label>Lunch Time</label><input id="fp_lunch_time" value="1:00 PM TO 3:00 PM"></div>
+            <div class="field"><label>Hi-Tea Time</label><input id="fp_hitea_time" value="4:00 PM TO 5:30 PM"></div>
+          </div>
+          <div class="field"><label>Dinner Time</label><input id="fp_dinner_time" value="6:00 PM TO 11:00 PM"></div>
+        </div>
+        
+        <div>
+          <p class="subgrid-title">Departmental Instructions</p>
+          <div class="field"><label>Front Office (FO)</label><input id="fp_fo_instruction" value="PLEASE GUIDE FOR THE VENUE"></div>
+          <div class="field"><label>Food &amp; Beverage (F&B)</label><input id="fp_fnb_instruction" value="MAKE THE ARRANGEMENT OF TABLE AND CHAIRS."></div>
+          <div class="field"><label>Housekeeping (HK)</label><input id="fp_hk_instruction" value="KEEP THE VENUE NEAT AND CLEAN"></div>
+          <div class="field"><label>Engineering (ENG)</label><input id="fp_eng_instruction" value="CHECK THE AC AND OTHER LIGHTING."></div>
+          <div class="field"><label>Accounts (AC)</label><input id="fp_accounts_instruction" value="THE BILLING INSTRUCTION IS ALREADY PROVIDED"></div>
+        </div>
+      </div>
+      
+      <p class="subgrid-title" style="margin-top: 25px;">Menu Details (Comma or newline separated list)</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+        <div class="field">
+          <label>Lunch Menu Items</label>
+          <textarea id="fp_lunch_menu" rows="6" placeholder="Enter lunch items..."></textarea>
+        </div>
+        <div class="field">
+          <label>Hi-Tea Menu Items</label>
+          <textarea id="fp_hitea_menu" rows="6" placeholder="Enter hi-tea items..."></textarea>
+        </div>
+        <div class="field">
+          <label>Dinner Menu Items</label>
+          <textarea id="fp_dinner_menu" rows="6" placeholder="Enter dinner items..."></textarea>
+        </div>
+      </div>
+
+      <p class="subgrid-title">Live Menu Grid Preview</p>
+      <div id="fp_menu_preview_container">
+        <table class="menu-preview-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Lunch</th>
+              <th>Hi-Tea</th>
+              <th>Dinner</th>
+            </tr>
+          </thead>
+          <tbody id="fp_menu_preview_body">
+            <tr>
+              <td colspan="4" class="empty-cell" style="text-align: center; padding: 20px;">
+                Enter menu items above to preview the grid.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- BOTTOM ACTIONS BAR -->
     <div class="bottom-actions">
       <div class="status-text" id="db_status_bottom">Firebase Status: Disconnected</div>
       <button class="btn btn-ghost" id="btnResetBottom" style="border-color: var(--line); color: var(--teal-deep);">↺ Start blank</button>
       <button class="btn btn-line" id="btnSaveBottom" style="border-color: var(--teal); color: var(--teal); background: #fffefb;">💾 Save Bill to Firebase</button>
+      
+      <button class="btn btn-line" id="btnPrintPdfBottom" style="border-color: var(--teal); color: var(--teal); background: #fffefb;">📄 Download PDF</button>
       <button class="btn btn-gold" id="btnExportBottom">⬇ Download Excel</button>
+      <button class="btn btn-whatsapp" id="btnWhatsAppShareBottom"><svg viewBox="0 0 448 512" width="15" height="15" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L32 503l141.1-37c32.6 17.8 69 27.2 106.4 27.2 122.4 0 222-99.6 222-222 0-59.3-23.2-115-65.1-157.1zM223.9 474c-33.2 0-65.7-8.9-94-25.7l-6.7-4-83.9 22 22.4-81.8-4.4-7C38.3 344 26 303.4 26 261.9c0-109.2 88.8-198 198-198 52.9 0 102.7 20.6 140 57.9 37.3 37.3 57.9 87.1 57.9 140 0 109.2-88.8 198-198 198zm108.3-148c-5.9-3-35-17.3-40.5-19.3-5.5-2-9.6-3-13.7 3-4.1 6-16 20.2-19.6 24.2-3.6 4-7.2 4.5-13.1 1.5-31.1-15.6-53.1-28.7-74.1-64.8-5.5-9.6 5.5-8.9 15.8-29.4 1.7-3.5.8-6.5-.4-9.5-1.2-3-11-26.5-15.1-36.4-4-9.7-8-8.4-11-8.5-2.8-.1-6.1-.1-9.4-.1s-8.7 1.2-13.2 6.1c-4.5 4.9-17.3 16.9-17.3 41.2s17.7 47.8 20.2 51.2c2.5 3.4 34.9 53.3 84.7 74.8 11.8 5.1 21.1 8.2 28.3 10.5 11.9 3.8 22.7 3.2 31.3 2 9.6-1.3 29.5-12 33.6-23.6 4.1-11.6 4.1-21.6 2.9-23.6-1.2-2-4.5-3-10.4-6z"/></svg>Share WhatsApp</button>
     </div>
 
   </div>
 
   <footer class="hint">Everything here recalculates live and stays in this browser tab only. Click <strong>Download
       Excel</strong> whenever you're ready for the final .xlsx bill summary.</footer>
+  
   <datalist id="particulars-list"></datalist>
+
+  <div id="pdf-export-wrapper" style="position: absolute; left: -9999px; top: 0; width: 794px; background: #faf6ee; color: #132524; font-family: 'Inter', sans-serif;">
+    <div id="pdf-export-content"></div>
+  </div>
 
   <!-- Firebase Compat SDKs (compatible with file:// protocol) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -1056,6 +1209,271 @@
         return dateStr;
       }
 
+      // ---------- Smart Menu Classification & FP Helpers ----------
+      function classifyMenuItem(name) {
+        const n = name.toLowerCase().trim();
+        if (!n) return '';
+        
+        // Soup
+        if (n.includes('soup') || n.includes('shorba') || n.includes('veloute') || n.includes('broth')) {
+          return 'Soup';
+        }
+        // Starter
+        if (n.includes('tikka') || n.includes('kebab') || n.includes('kabab') || n.includes('bhajiya') || 
+            n.includes('chili') || n.includes('chilli') || n.includes('spring roll') || n.includes('dry') || 
+            n.includes('crispy') || n.includes('fry') || n.includes('pakoda') || n.includes('manchurian') || 
+            n.includes('65') || n.includes('nugget') || n.includes('wings') || n.includes('samosa') || 
+            n.includes('bruschetta') || n.includes('momos') || n.includes('sandwich') || n.includes('paneer paneer') || 
+            n.includes('paneer achari') || n.includes('chicken tikka') || n.includes('kabab') || n.includes('bhajia')) {
+          return 'Starter';
+        }
+        // Salad
+        if (n.includes('salad') || n.includes('chaat') || n.includes('chat') || n.includes('raita') || 
+            n.includes('kachumber') || n.includes('peanut') || n.includes('papad') || n.includes('tzatziki') || 
+            n.includes('hummus')) {
+          return 'Salad';
+        }
+        // Indian Bread
+        if (n.includes('roti') || n.includes('naan') || n.includes('kulcha') || n.includes('paratha') || 
+            n.includes('bread') || n.includes('chapati') || n.includes('puri') || n.includes('phulka') || 
+            n.includes('bhakri') || n.includes('thepla') || n.includes('parotta') || n.includes('loti')) {
+          return 'Indian Bread';
+        }
+        // Rice
+        if (n.includes('rice') || n.includes('biryani') || n.includes('briyani') || n.includes('pulao') || 
+            n.includes('pulav') || n.includes('khichdi') || n.includes('risotto') || n.includes('jeera rice')) {
+          return 'Rice';
+        }
+        // Dal
+        if (n.includes('dal') || n.includes('tadka') || n.includes('makhani') || n.includes('kadi') || 
+            n.includes('sambar') || n.includes('dhal') || n.includes('kadhi')) {
+          return 'Dal';
+        }
+        // Dessert
+        if (n.includes('ice cream') || n.includes('jamun') || n.includes('brownie') || n.includes('halwa') || 
+            n.includes('kheer') || n.includes('sweet') || n.includes('pudding') || n.includes('cake') || 
+            n.includes('gulab') || n.includes('rasgulla') || n.includes('jalebi') || n.includes('pastry') || 
+            n.includes('mousse') || n.includes('shrikhand') || n.includes('basundi') || n.includes('kulfi') || 
+            n.includes('custard') || n.includes('ras malai') || n.includes('brownie')) {
+          return 'Dessert';
+        }
+        // Beverages
+        if (n.includes('tea') || n.includes('coffee') || n.includes('cookies') || n.includes('juice') || 
+            n.includes('water') || n.includes('soft drink') || n.includes('soda') || n.includes('coke') || 
+            n.includes('mocktail') || n.includes('shake') || n.includes('lassi') || n.includes('buttermilk') || 
+            n.includes('chaas') || n.includes('sharbat')) {
+          return 'Beverages';
+        }
+        // Live Counter
+        if (n.includes('live') || n.includes('counter') || n.includes('station') || n.includes('tawa') || 
+            n.includes('wok') || n.includes('live counter') || n.includes('live station')) {
+          return 'Live Counter';
+        }
+        // Special Items
+        if (n.includes('special') || n.includes('chef') || n.includes('signature') || n.includes('exclusive')) {
+          return 'Special Items';
+        }
+
+        // Default to Main Course
+        return 'Main Course';
+      }
+
+      const FP_CATEGORIES = [
+        'Soup',
+        'Starter',
+        'Salad',
+        'Main Course',
+        'Indian Bread',
+        'Rice',
+        'Dal',
+        'Dessert',
+        'Beverages',
+        'Live Counter',
+        'Special Items'
+      ];
+
+      function parseMenuItemsText(text) {
+        if (!text) return [];
+        // Split by comma or newline
+        return text.split(/[\n,]+/)
+          .map(item => item.trim())
+          .filter(item => item.length > 0);
+      }
+
+      function buildMenuJSON() {
+        const lunchText = document.getElementById('fp_lunch_menu').value;
+        const hiteaText = document.getElementById('fp_hitea_menu').value;
+        const dinnerText = document.getElementById('fp_dinner_menu').value;
+
+        const lunchItems = parseMenuItemsText(lunchText);
+        const hiteaItems = parseMenuItemsText(hiteaText);
+        const dinnerItems = parseMenuItemsText(dinnerText);
+
+        const menuJSON = {
+          lunch: {},
+          hitea: {},
+          dinner: {}
+        };
+
+        // Initialize empty arrays for categories
+        FP_CATEGORIES.forEach(cat => {
+          menuJSON.lunch[cat] = [];
+          menuJSON.hitea[cat] = [];
+          menuJSON.dinner[cat] = [];
+        });
+
+        // Helper to insert categorized items, avoiding duplicates
+        const insertItem = (list, item) => {
+          const lower = item.toLowerCase();
+          if (!list.some(existing => existing.toLowerCase() === lower)) {
+            list.push(item);
+          }
+        };
+
+        lunchItems.forEach(item => {
+          const cat = classifyMenuItem(item);
+          if (cat) insertItem(menuJSON.lunch[cat], item);
+        });
+
+        hiteaItems.forEach(item => {
+          const cat = classifyMenuItem(item);
+          if (cat) insertItem(menuJSON.hitea[cat], item);
+        });
+
+        dinnerItems.forEach(item => {
+          const cat = classifyMenuItem(item);
+          if (cat) insertItem(menuJSON.dinner[cat], item);
+        });
+
+        return menuJSON;
+      }
+
+      function renderMenuPreview() {
+        const menuJSON = buildMenuJSON();
+        const tbody = document.getElementById('fp_menu_preview_body');
+        if (!tbody) return;
+
+        // Find categories that have at least one item in lunch, hitea, or dinner
+        const activeCategories = FP_CATEGORIES.filter(cat => 
+          menuJSON.lunch[cat].length > 0 || 
+          menuJSON.hitea[cat].length > 0 || 
+          menuJSON.dinner[cat].length > 0
+        );
+
+        if (activeCategories.length === 0) {
+          tbody.innerHTML = `<tr>
+            <td colspan="4" class="empty-cell" style="text-align: center; padding: 20px;">
+              Enter menu items above to preview the grid.
+            </td>
+          </tr>`;
+          return;
+        }
+
+        let html = '';
+        activeCategories.forEach(cat => {
+          const maxCount = Math.max(
+            menuJSON.lunch[cat].length,
+            menuJSON.hitea[cat].length,
+            menuJSON.dinner[cat].length
+          );
+          
+          let displayCategory = cat.toUpperCase();
+          if (maxCount > 0 && cat !== 'Indian Bread' && cat !== 'Special Items') {
+            displayCategory = `${maxCount} ${displayCategory}`;
+          } else if (cat === 'Indian Bread') {
+            displayCategory = 'ASSORTED INDIAN BREADS';
+          }
+
+          const formatList = (items) => {
+            if (items.length === 0) return '<span class="empty-cell">—</span>';
+            return '<ul style="margin: 0; padding-left: 14px;">' + 
+              items.map(item => `<li>${esc(item)}</li>`).join('') + 
+              '</ul>';
+          };
+
+          html += `<tr>
+            <td class="category-cell">${esc(displayCategory)}</td>
+            <td>${formatList(menuJSON.lunch[cat])}</td>
+            <td>${formatList(menuJSON.hitea[cat])}</td>
+            <td>${formatList(menuJSON.dinner[cat])}</td>
+          </tr>`;
+        });
+
+        tbody.innerHTML = html;
+      }
+
+      function autofillFP() {
+        const activeRooms = room.filter(r => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
+        
+        let maxPax = 0;
+        room.forEach(r => { if (num(r.pax) > maxPax) maxPax = num(r.pax); });
+        fnb.forEach(r => { if (num(r.pax) > maxPax) maxPax = num(r.pax); });
+        document.getElementById('fp_pax').value = maxPax || '';
+        
+        let roomSummaryText = '';
+        const roomCountsByDate = {};
+        
+        activeRooms.forEach(r => {
+          if (r.date && r.qty) {
+            const qtyNum = num(r.qty);
+            if (qtyNum > 0) {
+              const formattedDate = formatHeaderDate(r.date);
+              roomCountsByDate[formattedDate] = (roomCountsByDate[formattedDate] || 0) + qtyNum;
+            }
+          }
+        });
+        
+        const summaryLines = [];
+        for (const [dateStr, qty] of Object.entries(roomCountsByDate)) {
+          summaryLines.push(`${qty} ROOM ON ${dateStr}`);
+        }
+        roomSummaryText = summaryLines.join('\n');
+        document.getElementById('fp_rooms_details').value = roomSummaryText;
+
+        const roomsByDate = {};
+        activeRooms.forEach(r => {
+          if (r.date) {
+            const formattedDate = formatHeaderDate(r.date);
+            if (!roomsByDate[formattedDate]) roomsByDate[formattedDate] = [];
+            roomsByDate[formattedDate].push(r);
+          }
+        });
+
+        const planVal = document.getElementById('g_plan').value;
+        let sharingText = '';
+        const sharingLines = [];
+        
+        for (const [dateStr, rows] of Object.entries(roomsByDate)) {
+          const parts = dateStr.split('-');
+          let ordinalDateStr = dateStr.toUpperCase();
+          if (parts.length === 3) {
+            const day = parseInt(parts[0], 10);
+            let suffix = 'TH';
+            if (day === 1 || day === 21 || day === 31) suffix = 'ST';
+            else if (day === 2 || day === 22) suffix = 'ND';
+            else if (day === 3 || day === 23) suffix = 'RD';
+            const monthName = parts[1].toUpperCase();
+            const fullYear = '20' + parts[2];
+            ordinalDateStr = `ON ${day}${suffix} ${monthName} ${fullYear}`;
+          }
+          
+          sharingLines.push(`${ordinalDateStr} :`);
+          rows.forEach(r => {
+            const rateStr = num(r.rate) ? fmt(num(r.rate)) : '0.00';
+            let occ = r.particulars || 'Room';
+            if (occ.toLowerCase().includes('double')) occ = 'DOUBLE OCCP.';
+            else if (occ.toLowerCase().includes('single')) occ = 'SINGLE OCCP.';
+            else if (occ.toLowerCase().includes('triple')) occ = 'TRIPLE OCCP.';
+            else occ = occ.toUpperCase();
+
+            sharingLines.push(`${rateStr}+GST ON ${planVal} PLAN ON ${occ}`);
+          });
+        }
+        
+        sharingText = sharingLines.join('\n');
+        document.getElementById('fp_room_sharing').value = sharingText;
+      }
+
       // ---------- particulars memory ----------
       const particularsMemory = new Set([
         'Room on Double Occupancy',
@@ -1117,6 +1535,24 @@
         document.getElementById('r_ifsc').value = 'UTIB0000380';
         document.getElementById('r_branch').value = 'Daman';
 
+        // Reset FP details
+        document.getElementById('fp_function_type').value = 'GETTOGETHER';
+        document.getElementById('fp_venue').value = 'CHICURRY';
+        document.getElementById('fp_rooms_details').value = '';
+        document.getElementById('fp_room_sharing').value = '';
+        document.getElementById('fp_lunch_time').value = '1:00 PM TO 3:00 PM';
+        document.getElementById('fp_hitea_time').value = '4:00 PM TO 5:30 PM';
+        document.getElementById('fp_dinner_time').value = '6:00 PM TO 11:00 PM';
+        document.getElementById('fp_fo_instruction').value = 'PLEASE GUIDE FOR THE VENUE';
+        document.getElementById('fp_fnb_instruction').value = 'MAKE THE ARRANGEMENT OF TABLE AND CHAIRS.';
+        document.getElementById('fp_hk_instruction').value = 'KEEP THE VENUE NEAT AND CLEAN';
+        document.getElementById('fp_eng_instruction').value = 'CHECK THE AC AND OTHER LIGHTING.';
+        document.getElementById('fp_accounts_instruction').value = 'THE BILLING INSTRUCTION IS ALREADY PROVIDED';
+        document.getElementById('fp_lunch_menu').value = '';
+        document.getElementById('fp_hitea_menu').value = '';
+        document.getElementById('fp_dinner_menu').value = '';
+        renderMenuPreview();
+
         room = [newRoomRow()];
         fnb = [newRoomRow({ qty: 1 })];
         liq = [newLiqRow()];
@@ -1127,10 +1563,24 @@
           if (el.id && el.id.startsWith('g_') && el.id !== 'g_advance' && el.id !== 'g_plan') {
             el.value = '';
           }
+          if (el.id && el.id.startsWith('fp_')) {
+            if (el.id === 'fp_function_type') el.value = 'GETTOGETHER';
+            else if (el.id === 'fp_venue') el.value = 'CHICURRY';
+            else if (el.id === 'fp_lunch_time') el.value = '1:00 PM TO 3:00 PM';
+            else if (el.id === 'fp_hitea_time') el.value = '4:00 PM TO 5:30 PM';
+            else if (el.id === 'fp_dinner_time') el.value = '6:00 PM TO 11:00 PM';
+            else if (el.id === 'fp_fo_instruction') el.value = 'PLEASE GUIDE FOR THE VENUE';
+            else if (el.id === 'fp_fnb_instruction') el.value = 'MAKE THE ARRANGEMENT OF TABLE AND CHAIRS.';
+            else if (el.id === 'fp_hk_instruction') el.value = 'KEEP THE VENUE NEAT AND CLEAN';
+            else if (el.id === 'fp_eng_instruction') el.value = 'CHECK THE AC AND OTHER LIGHTING.';
+            else if (el.id === 'fp_accounts_instruction') el.value = 'THE BILLING INSTRUCTION IS ALREADY PROVIDED';
+            else el.value = '';
+          }
         });
         document.getElementById('g_plan').value = 'MAP';
         document.getElementById('g_advance').value = 0;
         room = [newRoomRow()]; fnb = [newRoomRow()]; liq = [newLiqRow()];
+        renderMenuPreview();
         renderAll();
       }
 
@@ -1403,6 +1853,26 @@
               branch: getV('r_branch'),
             },
 
+            // FP details
+            fp: {
+              functionType: getV('fp_function_type'),
+              venue: getV('fp_venue'),
+              pax: getV('fp_pax'),
+              roomsDetails: getV('fp_rooms_details'),
+              roomSharing: getV('fp_room_sharing'),
+              lunchTime: getV('fp_lunch_time'),
+              hiteaTime: getV('fp_hitea_time'),
+              dinnerTime: getV('fp_dinner_time'),
+              foInstruction: getV('fp_fo_instruction'),
+              fnbInstruction: getV('fp_fnb_instruction'),
+              hkInstruction: getV('fp_hk_instruction'),
+              engInstruction: getV('fp_eng_instruction'),
+              accountsInstruction: getV('fp_accounts_instruction'),
+              lunchMenu: getV('fp_lunch_menu'),
+              hiteaMenu: getV('fp_hitea_menu'),
+              dinnerMenu: getV('fp_dinner_menu')
+            },
+
             // Tables
             room: room.map(r => ({ date: r.date, particulars: r.particulars, pax: r.pax, qty: r.qty, rate: r.rate, base: r.base, gst: r.gst })),
             fnb: fnb.map(r => ({ date: r.date, particulars: r.particulars, pax: r.pax, rate: r.rate, base: r.base, gst: r.gst })),
@@ -1544,6 +2014,43 @@
               setV('r_ifsc', data.resort.ifsc);
               setV('r_branch', data.resort.branch);
             }
+            
+            if (data.fp) {
+              setV('fp_function_type', data.fp.functionType);
+              setV('fp_venue', data.fp.venue);
+              setV('fp_pax', data.fp.pax || '');
+              setV('fp_rooms_details', data.fp.roomsDetails);
+              setV('fp_room_sharing', data.fp.roomSharing);
+              setV('fp_lunch_time', data.fp.lunchTime);
+              setV('fp_hitea_time', data.fp.hiteaTime);
+              setV('fp_dinner_time', data.fp.dinnerTime);
+              setV('fp_fo_instruction', data.fp.foInstruction);
+              setV('fp_fnb_instruction', data.fp.fnbInstruction);
+              setV('fp_hk_instruction', data.fp.hkInstruction);
+              setV('fp_eng_instruction', data.fp.engInstruction);
+              setV('fp_accounts_instruction', data.fp.accountsInstruction);
+              setV('fp_lunch_menu', data.fp.lunchMenu);
+              setV('fp_hitea_menu', data.fp.hiteaMenu);
+              setV('fp_dinner_menu', data.fp.dinnerMenu);
+            } else {
+              setV('fp_function_type', 'GETTOGETHER');
+              setV('fp_venue', 'CHICURRY');
+              setV('fp_pax', '');
+              setV('fp_rooms_details', '');
+              setV('fp_room_sharing', '');
+              setV('fp_lunch_time', '1:00 PM TO 3:00 PM');
+              setV('fp_hitea_time', '4:00 PM TO 5:30 PM');
+              setV('fp_dinner_time', '6:00 PM TO 11:00 PM');
+              setV('fp_fo_instruction', 'PLEASE GUIDE FOR THE VENUE');
+              setV('fp_fnb_instruction', 'MAKE THE ARRANGEMENT OF TABLE AND CHAIRS.');
+              setV('fp_hk_instruction', 'KEEP THE VENUE NEAT AND CLEAN');
+              setV('fp_eng_instruction', 'CHECK THE AC AND OTHER LIGHTING.');
+              setV('fp_accounts_instruction', 'THE BILLING INSTRUCTION IS ALREADY PROVIDED');
+              setV('fp_lunch_menu', '');
+              setV('fp_hitea_menu', '');
+              setV('fp_dinner_menu', '');
+            }
+            renderMenuPreview();
             
             // Re-inflate room, fnb, liq state arrays with new UIDs
             room = (data.room || []).map(r => newRoomRow({
@@ -2111,9 +2618,638 @@
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
       }
 
+      async function generatePdfBlob() {
+        const g = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+
+        const activeRooms = room.filter(r => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
+        const activeFnbs  = fnb.filter(r  => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
+        const activeLiqs  = liq.filter(r  => (r.item || '').trim()        !== '' || num(r.amount) !== 0);
+
+        let hasRooms = activeRooms.length > 0;
+        let hasFnbs  = activeFnbs.length  > 0;
+        let hasLiqs  = activeLiqs.length  > 0;
+        if (!hasRooms && !hasFnbs && !hasLiqs) hasRooms = true;
+
+        let sections = [], grandGst = 0, grandTotal = 0, tablesHtml = '';
+
+        if (hasRooms) {
+          sections.push('A');
+          tablesHtml += `<div class="pdf-section-title">ROOM CHARGES (GST)</div>
+          <table class="pdf-data-table"><thead><tr>
+            <th style="width:14%">Date</th><th>Particulars</th>
+            <th style="width:8%;text-align:right">Pax</th><th style="width:8%;text-align:right">Rooms</th>
+            <th style="width:11%;text-align:right">Rate</th><th style="width:13%;text-align:right">Base Amount</th>
+            <th style="width:8%;text-align:center">GST%</th><th style="width:12%;text-align:right">GST Amt</th>
+            <th style="width:14%;text-align:right">Total</th>
+          </tr></thead><tbody>`;
+          const list = activeRooms.length > 0 ? activeRooms : [newRoomRow()];
+          let subGst = 0, subTotal = 0;
+          list.forEach(r => {
+            const {gstAmt, total} = calcRoomRow(r);
+            subGst += gstAmt; subTotal += total;
+            tablesHtml += `<tr>
+              <td style="text-align:center">${esc(formatTableDate(r.date))}</td>
+              <td>${esc(r.particulars)}</td>
+              <td style="text-align:right">${r.pax !== '' ? num(r.pax) : ''}</td>
+              <td style="text-align:right">${r.qty !== '' ? num(r.qty) : ''}</td>
+              <td style="text-align:right">${num(r.rate) ? fmt(num(r.rate)) : ''}</td>
+              <td style="text-align:right">${fmt(num(r.base))}</td>
+              <td style="text-align:center">${num(r.gst)}%</td>
+              <td style="text-align:right">${fmt(gstAmt)}</td>
+              <td style="text-align:right;font-weight:bold">${fmt(total)}</td>
+            </tr>`;
+          });
+          grandGst += subGst; grandTotal += subTotal;
+          tablesHtml += `<tr class="pdf-subtotal-row">
+            <td colspan="7" style="text-align:right">TOTAL:</td>
+            <td style="text-align:right">${fmt(subGst)}</td>
+            <td style="text-align:right">${fmt(subTotal)}</td>
+          </tr></tbody></table>`;
+        }
+
+        if (hasFnbs) {
+          sections.push('B');
+          tablesHtml += `<div class="pdf-section-title">FOOD &amp; BEVERAGE (GST)</div>
+          <table class="pdf-data-table"><thead><tr>
+            <th style="width:14%">Date</th><th>Particulars</th>
+            <th style="width:8%;text-align:right">Pax</th>
+            <th style="width:12%;text-align:right">Rate</th><th style="width:14%;text-align:right">Base Amount</th>
+            <th style="width:8%;text-align:center">GST%</th><th style="width:12%;text-align:right">GST Amt</th>
+            <th style="width:14%;text-align:right">Total</th>
+          </tr></thead><tbody>`;
+          const list = activeFnbs.length > 0 ? activeFnbs : [newRoomRow({qty:1})];
+          let subGst = 0, subTotal = 0;
+          list.forEach(r => {
+            const {gstAmt, total} = calcRoomRow(r);
+            subGst += gstAmt; subTotal += total;
+            tablesHtml += `<tr>
+              <td style="text-align:center">${esc(formatTableDate(r.date))}</td>
+              <td>${esc(r.particulars)}</td>
+              <td style="text-align:right">${r.pax !== '' ? num(r.pax) : ''}</td>
+              <td style="text-align:right">${num(r.rate) ? fmt(num(r.rate)) : ''}</td>
+              <td style="text-align:right">${fmt(num(r.base))}</td>
+              <td style="text-align:center">${num(r.gst)}%</td>
+              <td style="text-align:right">${fmt(gstAmt)}</td>
+              <td style="text-align:right;font-weight:bold">${fmt(total)}</td>
+            </tr>`;
+          });
+          grandGst += subGst; grandTotal += subTotal;
+          tablesHtml += `<tr class="pdf-subtotal-row">
+            <td colspan="6" style="text-align:right">TOTAL:</td>
+            <td style="text-align:right">${fmt(subGst)}</td>
+            <td style="text-align:right">${fmt(subTotal)}</td>
+          </tr></tbody></table>`;
+        }
+
+        if (hasLiqs) {
+          sections.push('C');
+          tablesHtml += `<div class="pdf-section-title">HARD LIQUOR — VAT ON ALCOHOL</div>
+          <table class="pdf-data-table"><thead><tr>
+            <th style="width:14%">Date</th><th>Item Name (Remark)</th>
+            <th style="width:8%;text-align:right">Qty</th>
+            <th style="width:12%;text-align:right">Rate</th><th style="width:14%;text-align:right">Amount</th>
+            <th style="width:8%;text-align:center">VAT%</th><th style="width:12%;text-align:right">VAT Amt</th>
+            <th style="width:14%;text-align:right">Net Amount</th>
+          </tr></thead><tbody>`;
+          const list = activeLiqs.length > 0 ? activeLiqs : [newLiqRow()];
+          let subVat = 0, subNet = 0;
+          list.forEach(r => {
+            const {vatAmt, net} = calcLiqRow(r);
+            subVat += vatAmt; subNet += net;
+            tablesHtml += `<tr>
+              <td style="text-align:center">${esc(formatTableDate(r.date))}</td>
+              <td>${esc(r.item)}${r.remark ? ` <span style="font-size:9px;color:#666;font-style:italic">(${esc(r.remark)})</span>` : ''}</td>
+              <td style="text-align:right">${r.qty !== '' ? num(r.qty) : ''}</td>
+              <td style="text-align:right">${num(r.rate) ? fmt(num(r.rate)) : ''}</td>
+              <td style="text-align:right">${fmt(num(r.amount))}</td>
+              <td style="text-align:center">${num(r.vat)}%</td>
+              <td style="text-align:right">${fmt(vatAmt)}</td>
+              <td style="text-align:right;font-weight:bold">${fmt(net)}</td>
+            </tr>`;
+          });
+          grandGst += subVat; grandTotal += subNet;
+          tablesHtml += `<tr class="pdf-subtotal-row">
+            <td colspan="6" style="text-align:right">TOTAL:</td>
+            <td style="text-align:right">${fmt(subVat)}</td>
+            <td style="text-align:right">${fmt(subNet)}</td>
+          </tr></tbody></table>`;
+        }
+
+        const totalLabel = `TOTAL (${sections.join('+')})`;
+        const adv = num(g('g_advance'));
+        const bal = grandTotal - adv;
+        let balLabel = 'BALANCE DUE FROM GUEST', balClass = 'due';
+        if (Math.abs(bal) < 0.005) { balLabel = 'SETTLED'; balClass = 'settled'; }
+        else if (bal < 0)           { balLabel = 'REFUND DUE TO GUEST'; balClass = 'refund'; }
+
+        const partyName = (g('g_party') || 'guest').trim().replace(/[^a-z0-9]+/gi, '_').slice(0, 40) || 'guest';
+
+        const fullHtml = `
+          <style>
+            * { box-sizing: border-box; }
+            .pdf-title-bar { background:#0f3d3e;color:#fff;font-size:18px;font-weight:bold;text-align:center;padding:9px;margin-bottom:10px; }
+            .pdf-header-table { width:100%;border-collapse:collapse;margin-bottom:10px; }
+            .pdf-header-table td { border:1px solid #e2ddd0;padding:6px 9px;vertical-align:top;font-size:10px;line-height:1.45; }
+            .pdf-section-title { background:#e6eceb;color:#0f3d3e;font-weight:bold;font-size:9.5px;letter-spacing:.06em;padding:4px 7px;border:1px solid #e2ddd0;margin-top:10px;margin-bottom:3px;text-transform:uppercase; }
+            .pdf-data-table { width:100%;border-collapse:collapse;margin-bottom:3px; }
+            .pdf-data-table th { background:#d8a448;color:#132524;font-weight:bold;font-size:8.5px;padding:4px;border:1px solid #e2ddd0;text-align:center;text-transform:uppercase; }
+            .pdf-data-table td { padding:3px 5px;border:1px solid #e2ddd0;font-size:9px;color:#132524; }
+            .pdf-subtotal-row td { background:#faf6ee;font-weight:bold;font-size:9px;color:#0f3d3e;border-top:1.5px solid #0f3d3e; }
+            .pdf-summary-table { width:100%;border-collapse:collapse;margin-top:9px; }
+            .pdf-summary-table td { padding:6px 9px;border:1px solid #e2ddd0;font-size:10px; }
+            .grand-total-row { background:#0f3d3e;color:#fff; }
+            .advance-row { background:#e2ddd0;color:#132524; }
+            .balance-row.due { background:#fbeae5;color:#b3492f; }
+            .balance-row.refund { background:#e7f3ec;color:#2f7d5e; }
+            .balance-row.settled { background:#f1f4f2;color:#555; }
+          </style>
+          <div class="pdf-title-bar">PERFORMA INVOICE</div>
+          <table class="pdf-header-table"><tr>
+            <td style="width:50%">
+              <div style="font-weight:bold;border-bottom:1px dashed #e2ddd0;padding-bottom:3px;margin-bottom:4px;color:#0f3d3e">TO — GUEST / PARTY DETAILS</div>
+              <strong>Party Name:</strong> ${esc(g('g_party')) || 'N/A'}<br>
+              <strong>Address:</strong> ${esc(g('g_address')) || 'N/A'}<br>
+              <strong>Contact No:</strong> ${esc(g('g_contact')) || 'N/A'}<br>
+              <strong>GST No:</strong> ${esc(g('g_gst')) || 'N/A'}<br>
+              <strong>Contact Person:</strong> ${esc(g('g_person')) || 'N/A'}<br>
+              <strong>Check-In:</strong> ${esc(formatHeaderDate(g('g_checkin')))} &nbsp;|&nbsp; <strong>Check-Out:</strong> ${esc(formatHeaderDate(g('g_checkout')))}<br>
+              <strong>Plan:</strong> ${esc(g('g_plan'))} &nbsp;|&nbsp; <strong>Bill Date:</strong> ${esc(formatHeaderDate(g('g_billdate')))}<br>
+              <strong>PI Number:</strong> ${esc(g('g_pino')) || 'N/A'}
+            </td>
+            <td style="width:50%">
+              <div style="font-weight:bold;border-bottom:1px dashed #e2ddd0;padding-bottom:3px;margin-bottom:4px;color:#0f3d3e">FROM — RESORT DETAILS</div>
+              <strong>Resort Name:</strong> ${esc(g('r_name'))}<br>
+              <strong>Address:</strong> ${esc(g('r_address'))}<br>
+              <strong>GST No:</strong> ${esc(g('r_gst'))}<br>
+              <strong>Tel No:</strong> ${esc(g('r_tel'))}<br>
+              <strong>PI Validity:</strong> ${esc(formatHeaderDate(g('r_pivalidity')))}<br>
+              <div style="margin-top:5px;border-top:1px dashed #e2ddd0;padding-top:3px">
+                <strong>BANK DETAILS:</strong><br>
+                <strong>Bank:</strong> ${esc(g('r_bank'))} &nbsp;|&nbsp; <strong>A/C:</strong> ${esc(g('r_acct'))}<br>
+                <strong>IFSC:</strong> ${esc(g('r_ifsc'))} &nbsp;|&nbsp; <strong>Branch:</strong> ${esc(g('r_branch'))}
+              </div>
+            </td>
+          </tr></table>
+          ${tablesHtml}
+          <table class="pdf-data-table" style="margin-top:7px">
+            <tr class="pdf-subtotal-row" style="background:#faf6ee">
+              <td style="text-align:right;border-bottom:2px double #0f3d3e;font-weight:bold">${totalLabel}:</td>
+              <td style="width:12%;text-align:right;border-bottom:2px double #0f3d3e;font-weight:bold;color:#0f3d3e">${fmt(grandGst)}</td>
+              <td style="width:14%;text-align:right;border-bottom:2px double #0f3d3e;font-weight:bold;color:#0f3d3e">${fmt(grandTotal)}</td>
+            </tr>
+          </table>
+          <table class="pdf-summary-table">
+            <tr class="grand-total-row"><td style="text-align:right;width:74%">GRAND TOTAL:</td><td style="text-align:right;width:26%;font-weight:bold">${money(grandTotal)}</td></tr>
+            <tr class="advance-row"><td style="text-align:right">ADVANCE RECEIVED:</td><td style="text-align:right;font-weight:bold">${money(adv)}</td></tr>
+            <tr class="balance-row ${balClass}"><td style="text-align:right;text-transform:uppercase">${balLabel}:</td><td style="text-align:right;font-weight:bold">${money(Math.abs(bal))}</td></tr>
+          </table>
+        `;
+
+        // --- FIX 1: Use position:fixed with top:-99999px so browser computes real layout ---
+        const tempEl = document.createElement('div');
+        tempEl.style.cssText = 'position:fixed;top:-99999px;left:0;width:794px;background:#faf6ee;font-family:Inter,Arial,sans-serif;color:#132524;';
+        tempEl.innerHTML = fullHtml;
+        document.body.appendChild(tempEl);
+
+        const opt = {
+          margin:      [10, 10, 10, 10],
+          filename:    `Devka_Beach_Resort_Bill_${partyName}.pdf`,
+          image:       { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, letterRendering: true, windowWidth: 794 },
+          jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak:   { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        try {
+          // --- FIX 2: Return blob directly instead of returning the worker (which is a thenable) ---
+          const blob = await html2pdf().from(tempEl).set(opt).outputPdf('blob');
+          return { blob, partyName };
+        } finally {
+          document.body.removeChild(tempEl);
+        }
+      }
+
+      async function downloadPdf() {
+        const statusTop    = document.getElementById('db_status');
+        const statusBottom = document.getElementById('db_status_bottom');
+        function setStatus(text, type) {
+          if (statusTop)    { statusTop.textContent = text;    statusTop.className    = 'card-note ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
+          if (statusBottom) { statusBottom.textContent = text; statusBottom.className = 'status-text ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
+        }
+        setStatus('Generating PDF...', 'loading');
+        try {
+          const { blob, partyName } = await generatePdfBlob();
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `Devka_Beach_Resort_Bill_${partyName}.pdf`;
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          URL.revokeObjectURL(a.href);
+          setStatus('PDF downloaded!', 'success');
+        } catch (err) {
+          console.error('PDF error:', err);
+          setStatus('PDF failed: ' + err.message, 'error');
+          alert('Could not generate PDF: ' + err.message);
+        } finally {
+          setTimeout(() => {
+            if (statusTop    && statusTop.classList.contains('success'))    { statusTop.textContent = currentBillId ? 'Editing Saved Bill' : 'Ready'; statusTop.className = 'card-note'; }
+            if (statusBottom && statusBottom.classList.contains('success')) { statusBottom.textContent = 'Firebase connected'; statusBottom.className = 'status-text'; }
+          }, 3000);
+        }
+      }
+
+      async function shareToWhatsApp() {
+        const statusTop    = document.getElementById('db_status');
+        const statusBottom = document.getElementById('db_status_bottom');
+        function setStatus(text, type) {
+          if (statusTop)    { statusTop.textContent = text;    statusTop.className    = 'card-note ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
+          if (statusBottom) { statusBottom.textContent = text; statusBottom.className = 'status-text ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
+        }
+        setStatus('Generating PDF for WhatsApp...', 'loading');
+        try {
+          const g = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+          const partyNameVal  = g('g_party') || 'Guest';
+          const pinoVal       = g('g_pino') || 'N/A';
+          const billDateVal   = formatHeaderDate(g('g_billdate'));
+          const { roomSub, fnbSub, liqSub } = subtotals();
+          const grandTotalVal = roomSub + fnbSub + liqSub;
+          const advVal        = num(g('g_advance'));
+          const balVal        = grandTotalVal - advVal;
+          const balanceStr    = Math.abs(balVal) < 0.005 ? '*Settled*' : balVal > 0 ? `*Balance Due:* ₹${fmt(balVal)}` : `*Refund Due:* ₹${fmt(Math.abs(balVal))}`;
+          const messageText   =
+            `*Devka Beach Resort — Performa Invoice*\n` +
+            `-----------------------------------\n` +
+            `*PI No:* ${pinoVal}\n` +
+            `*Guest/Party:* ${partyNameVal}\n` +
+            `*Date:* ${billDateVal}\n` +
+            `*Grand Total:* ₹${fmt(grandTotalVal)}\n` +
+            `*Advance:* ₹${fmt(advVal)}\n` +
+            `${balanceStr}\n\n` +
+            `Please find the attached PDF Invoice.`;
+
+          const { blob: pdfBlob, partyName: pn } = await generatePdfBlob();
+          const filename = `Devka_Beach_Resort_Bill_${pn}.pdf`;
+          const pdfFile  = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+          if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+            setStatus('Sharing PDF to WhatsApp...', 'loading');
+            await navigator.share({ files: [pdfFile], title: `Devka Beach Resort Bill — ${partyNameVal}`, text: messageText });
+            setStatus('Shared successfully!', 'success');
+          } else {
+            // Desktop fallback: download PDF + open WhatsApp Web with pre-filled text
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(pdfBlob);
+            a.download = filename;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(messageText)}`, '_blank');
+            setStatus('PDF downloaded. WhatsApp opened!', 'success');
+            alert('PDF generated and downloaded!\n\nOpening WhatsApp Web — select your contact and attach the downloaded PDF.');
+          }
+        } catch (err) {
+          console.error('WhatsApp Share error:', err);
+          setStatus('Share Failed: ' + err.message, 'error');
+          alert('Could not share to WhatsApp: ' + err.message);
+        } finally {
+          setTimeout(() => {
+            if (statusTop    && statusTop.classList.contains('success'))    { statusTop.textContent = currentBillId ? 'Editing Saved Bill' : 'Ready'; statusTop.className = 'card-note'; }
+            if (statusBottom && statusBottom.classList.contains('success')) { statusBottom.textContent = 'Firebase connected'; statusBottom.className = 'status-text'; }
+          }, 4000);
+        }
+      }
+
+      async function generateFpPdfBlob() {
+        const g = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+        const escHtml = v => (v === undefined || v === null) ? '' : String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+        const guestName = g('g_party') || 'N/A';
+        const contact = g('g_contact') || 'N/A';
+        const checkin = formatHeaderDate(g('g_checkin')) || 'N/A';
+        const checkout = formatHeaderDate(g('g_checkout')) || 'N/A';
+        const rooms = g('fp_rooms_details') || 'N/A';
+        const pax = g('fp_pax') || 'N/A';
+        const functionType = g('fp_function_type') || 'GETTOGETHER';
+        const venue = g('fp_venue') || 'CHICURRY';
+        const roomSharing = g('fp_room_sharing') || 'N/A';
+        
+        const fo = g('fp_fo_instruction') || 'N/A';
+        const fnb = g('fp_fnb_instruction') || 'N/A';
+        const hk = g('fp_hk_instruction') || 'N/A';
+        const eng = g('fp_eng_instruction') || 'N/A';
+        const ac = g('fp_accounts_instruction') || 'N/A';
+        
+        const lunchTime = g('fp_lunch_time') || '';
+        const hiteaTime = g('fp_hitea_time') || '';
+        const dinnerTime = g('fp_dinner_time') || '';
+
+        const menuJSON = buildMenuJSON();
+
+        // Build Menu table rows HTML
+        let menuRowsHtml = '';
+        
+        const activeCategories = FP_CATEGORIES.filter(cat => 
+          menuJSON.lunch[cat].length > 0 || 
+          menuJSON.hitea[cat].length > 0 || 
+          menuJSON.dinner[cat].length > 0
+        );
+
+        activeCategories.forEach(cat => {
+          const maxCount = Math.max(
+            menuJSON.lunch[cat].length,
+            menuJSON.hitea[cat].length,
+            menuJSON.dinner[cat].length
+          );
+          
+          let displayCategory = cat.toUpperCase();
+          if (maxCount > 0 && cat !== 'Indian Bread' && cat !== 'Special Items') {
+            displayCategory = `${maxCount} ${displayCategory}`;
+          } else if (cat === 'Indian Bread') {
+            displayCategory = 'ASSORTED INDIAN BREADS';
+          }
+
+          const formatListBr = (items) => {
+            if (items.length === 0) return '';
+            return items.map(item => escHtml(item).toUpperCase()).join('<br>');
+          };
+
+          menuRowsHtml += `<tr>
+            <td style="border: 1px solid #132524; padding: 10px; font-weight: bold; background: #faf6ee; width: 22%; text-align: left; font-size: 10px;">${escHtml(displayCategory)}</td>
+            <td style="border: 1px solid #132524; padding: 10px; width: 26%; text-align: center; font-size: 9.5px; line-height: 1.4; font-weight: 500;">${formatListBr(menuJSON.lunch[cat])}</td>
+            <td style="border: 1px solid #132524; padding: 10px; width: 26%; text-align: center; font-size: 9.5px; line-height: 1.4; font-weight: 500;">${formatListBr(menuJSON.hitea[cat])}</td>
+            <td style="border: 1px solid #132524; padding: 10px; width: 26%; text-align: center; font-size: 9.5px; line-height: 1.4; font-weight: 500;">${formatListBr(menuJSON.dinner[cat])}</td>
+          </tr>`;
+        });
+
+        if (menuRowsHtml === '') {
+          menuRowsHtml = `<tr>
+            <td colspan="4" style="border: 1px solid #132524; padding: 30px; text-align: center; color: #666; font-style: italic; font-size: 11px;">
+              No menu items defined.
+            </td>
+          </tr>`;
+        }
+
+        const partyFilename = guestName.trim().replace(/[^a-z0-9]+/gi, '_').slice(0, 40) || 'guest';
+
+        const logoHtml = `
+          <div style="text-align: center; margin-bottom: 12px; margin-top: 5px;">
+            <svg viewBox="0 0 100 80" width="46" height="36" style="margin-bottom: 3px; display: inline-block;">
+              <path d="M50 75 C45 60 45 40 50 25 C47 22 41 22 35 25 C37 19 43 17 50 20 C50 15 48 10 45 5 C49 9 51 15 50 20 C57 17 63 19 65 25 C59 22 53 22 50 25 C55 40 55 60 50 75 Z" fill="#d8a448" />
+            </svg>
+            <div style="font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: #d8a448; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.1;">Devka Beach Resort</div>
+            <div style="font-family: 'Inter', sans-serif; font-size: 8px; color: #3d5453; letter-spacing: 0.06em; font-style: italic; margin-top: 1px;">Hospitality at its best</div>
+          </div>
+        `;
+
+        const footerHtml = `
+          <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; text-align: center; font-family: 'Inter', sans-serif; border-top: 1px solid #e2ddd0; padding-top: 8px;">
+            <div style="font-family: 'Fraunces', serif; font-size: 12px; font-weight: bold; color: #d8a448; margin-bottom: 2px;">Devka Beach Resort</div>
+            <div style="font-size: 8.5px; color: #3d5453; line-height: 1.4; letter-spacing: 0.02em;">
+              Plot No. 78/7, Sea Face Road, Nani Daman – Daman -396210<br>
+              M:- 8600530448 / 7861813909 | Telephone: +91 260 225 3063 | WebSite: www.devkabeachresort.com
+            </div>
+          </div>
+        `;
+
+        const fullHtml = `
+          <style>
+            .fp-page {
+              width: 210mm;
+              height: 297mm;
+              padding: 20mm 15mm;
+              box-sizing: border-box;
+              position: relative;
+              background: #ffffff;
+              font-family: 'Inter', sans-serif;
+              color: #132524;
+            }
+            .fp-border {
+              position: absolute;
+              top: 8mm;
+              bottom: 8mm;
+              left: 8mm;
+              right: 8mm;
+              border: 2px solid #d8a448;
+              pointer-events: none;
+              box-sizing: border-box;
+            }
+            .fp-title {
+              font-size: 12.5px;
+              font-weight: bold;
+              text-decoration: underline;
+              text-align: center;
+              letter-spacing: 0.05em;
+              margin-bottom: 18px;
+              font-family: 'Inter', sans-serif;
+            }
+            .fp-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 0px;
+              font-size: 10.5px;
+            }
+            .fp-table td {
+              border: 1px solid #132524;
+              padding: 5.5px 9px;
+              vertical-align: middle;
+            }
+            .fp-table td.label-cell {
+              font-weight: bold;
+              width: 32%;
+              background: #fbf8f1;
+            }
+            .fp-table td.value-cell {
+              width: 68%;
+            }
+            .fp-table td.value-cell-sharing {
+              background: #fffff2;
+              font-weight: 500;
+            }
+            .fp-instructions-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: -1px;
+              font-size: 10px;
+            }
+            .fp-instructions-table td {
+              border: 1px solid #132524;
+              padding: 9px;
+              vertical-align: top;
+              width: 50%;
+            }
+          </style>
+          
+          <!-- PAGE 1: CORE FP DETAILS -->
+          <div class="fp-page">
+            <div class="fp-border"></div>
+            ${logoHtml}
+            <div class="fp-title">FP FOR INTERNAL PURPOSE ONLY</div>
+            
+            <table class="fp-table">
+              <tr>
+                <td class="label-cell">GUEST NAME / COMPANY NAME</td>
+                <td class="value-cell" style="font-weight: 700; font-size: 11px;">${escHtml(guestName).toUpperCase()}</td>
+              </tr>
+              <tr>
+                <td class="label-cell">CONTACT NUMBER</td>
+                <td class="value-cell">${escHtml(contact)}</td>
+              </tr>
+              <tr>
+                <td class="label-cell">DATE OF CHECK-IN</td>
+                <td class="value-cell">${escHtml(checkin)}</td>
+              </tr>
+              <tr>
+                <td class="label-cell">DATE OF CHECKOUT</td>
+                <td class="value-cell">${escHtml(checkout)}</td>
+              </tr>
+              <tr>
+                <td class="label-cell">NO OF ROOMS</td>
+                <td class="value-cell" style="white-space: pre-line; font-weight: 500;">${escHtml(rooms)}</td>
+              </tr>
+              <tr>
+                <td class="label-cell">NUMBER OF PAX</td>
+                <td class="value-cell">${escHtml(pax)}</td>
+              </tr>
+              <tr>
+                <td class="label-cell">TYPE OF FUNCTION</td>
+                <td class="value-cell" style="font-weight: bold; text-transform: uppercase;">${escHtml(functionType)}</td>
+              </tr>
+              <tr>
+                <td class="label-cell">VENUE</td>
+                <td class="value-cell" style="font-weight: bold; text-transform: uppercase;">${escHtml(venue)}</td>
+              </tr>
+              <tr>
+                <td class="label-cell" style="vertical-align: top;">ROOM RATE SHARING</td>
+                <td class="value-cell value-cell-sharing" style="white-space: pre-line; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; line-height: 1.45;">${escHtml(roomSharing)}</td>
+              </tr>
+            </table>
+            
+            <table class="fp-instructions-table">
+              <tr>
+                <td>
+                  <div style="font-weight: bold; text-decoration: underline; margin-bottom: 6px; font-size: 10.5px;">NOTE :</div>
+                  <div style="margin-bottom: 4px; line-height: 1.45;"><strong>FO :</strong> ${escHtml(fo)}</div>
+                  <div style="margin-bottom: 4px; line-height: 1.45;"><strong>F&amp;B :</strong> ${escHtml(fnb)}</div>
+                  <div style="margin-bottom: 4px; line-height: 1.45;"><strong>HK :</strong> ${escHtml(hk)}</div>
+                  <div style="margin-bottom: 4px; line-height: 1.45;"><strong>ENG :</strong> ${escHtml(eng)}</div>
+                  <div style="line-height: 1.45;"><strong>AC :</strong> ${escHtml(ac)}</div>
+                </td>
+                <td style="line-height: 1.8; font-size: 10.5px;">
+                  <div style="margin-bottom: 8px;"><strong>LUNCH :</strong> ${escHtml(venue).toUpperCase()} ${escHtml(lunchTime)}</div>
+                  <div style="margin-bottom: 8px;"><strong>HI-TEA :</strong> ${escHtml(venue).toUpperCase()} ${escHtml(hiteaTime)}</div>
+                  <div><strong>DINNER :</strong> ${escHtml(venue).toUpperCase()} ${escHtml(dinnerTime)}</div>
+                </td>
+              </tr>
+            </table>
+            
+            ${footerHtml}
+          </div>
+          
+          <div style="page-break-before: always;"></div>
+          
+          <!-- PAGE 2: MENU DETAILS -->
+          <div class="fp-page">
+            <div class="fp-border"></div>
+            ${logoHtml}
+            
+            <div style="background: #f5cbb7; border: 1px solid #132524; text-align: center; padding: 6px 12px; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: bold; letter-spacing: 0.05em; margin-bottom: 12px; text-transform: uppercase;">
+              NON VEG MENU
+            </div>
+            
+            <table style="width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif;">
+              <thead>
+                <tr>
+                  <th style="border: 1px solid #132524; background: #e2ddd0; padding: 8px; text-align: left; font-size: 10px; width: 22%; text-transform: uppercase;">Item</th>
+                  <th style="border: 1px solid #132524; background: #e2ddd0; padding: 8px; text-align: center; font-size: 10px; width: 26%; text-transform: uppercase;">Lunch</th>
+                  <th style="border: 1px solid #132524; background: #e2ddd0; padding: 8px; text-align: center; font-size: 10px; width: 26%; text-transform: uppercase;">Hi-Tea</th>
+                  <th style="border: 1px solid #132524; background: #e2ddd0; padding: 8px; text-align: center; font-size: 10px; width: 26%; text-transform: uppercase;">Dinner</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${menuRowsHtml}
+              </tbody>
+            </table>
+            
+            ${footerHtml}
+          </div>
+        `;
+
+        const tempEl = document.createElement('div');
+        tempEl.style.cssText = 'position:fixed;top:-99999px;left:0;width:794px;background:#ffffff;';
+        tempEl.innerHTML = fullHtml;
+        document.body.appendChild(tempEl);
+
+        const opt = {
+          margin:      [0, 0, 0, 0],
+          filename:    `Devka_Resort_FP_${partyFilename}.pdf`,
+          image:       { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, letterRendering: true, windowWidth: 794 },
+          jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak:   { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        try {
+          const blob = await html2pdf().from(tempEl).set(opt).outputPdf('blob');
+          return { blob, partyFilename };
+        } finally {
+          document.body.removeChild(tempEl);
+        }
+      }
+
+      async function downloadFpPdf() {
+        const statusTop    = document.getElementById('db_status');
+        const statusBottom = document.getElementById('db_status_bottom');
+        function setStatus(text, type) {
+          if (statusTop)    { statusTop.textContent = text;    statusTop.className    = 'card-note ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
+          if (statusBottom) { statusBottom.textContent = text; statusBottom.className = 'status-text ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : ''); }
+        }
+        
+        setStatus('Generating FP PDF...', 'loading');
+        try {
+          const { blob, partyFilename } = await generateFpPdfBlob();
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `Devka_Resort_FP_${partyFilename}.pdf`;
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          URL.revokeObjectURL(a.href);
+          setStatus('FP PDF downloaded!', 'success');
+        } catch (err) {
+          console.error('FP PDF error:', err);
+          setStatus('FP PDF failed: ' + err.message, 'error');
+          alert('Could not generate FP PDF: ' + err.message);
+        } finally {
+          setTimeout(() => {
+            if (statusTop    && statusTop.classList.contains('success'))    { statusTop.textContent = currentBillId ? 'Editing Saved Bill' : 'Ready'; statusTop.className = 'card-note'; }
+            if (statusBottom && statusBottom.classList.contains('success')) { statusBottom.textContent = 'Firebase connected'; statusBottom.className = 'status-text'; }
+          }, 3000);
+        }
+      }
+
       // ---------- Action Bindings ----------
       document.getElementById('btnSave').addEventListener('click', saveBill);
       document.getElementById('btnSaveBottom').addEventListener('click', saveBill);
+
+      document.getElementById('btnAutofillFP').addEventListener('click', () => {
+        autofillFP();
+      });
+      document.getElementById('btnFPDownloadPdf').addEventListener('click', () => {
+        downloadFpPdf();
+      });
+      document.getElementById('fp_lunch_menu').addEventListener('input', renderMenuPreview);
+      document.getElementById('fp_hitea_menu').addEventListener('input', renderMenuPreview);
+      document.getElementById('fp_dinner_menu').addEventListener('input', renderMenuPreview);
+
+      document.getElementById('btnPrintPdf').addEventListener('click', () => {
+        downloadPdf();
+      });
+      document.getElementById('btnPrintPdfBottom').addEventListener('click', () => {
+        downloadPdf();
+      });
+
+      document.getElementById('btnWhatsAppShare').addEventListener('click', () => {
+        shareToWhatsApp();
+      });
+      document.getElementById('btnWhatsAppShareBottom').addEventListener('click', () => {
+        shareToWhatsApp();
+      });
 
       document.getElementById('btnExport').addEventListener('click', () => {
         exportExcel().catch(err => { console.error(err); alert('Could not generate the Excel file: ' + err.message); });
