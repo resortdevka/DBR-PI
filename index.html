@@ -11,7 +11,20 @@
     rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+  <!-- docx library: try jsDelivr first, fallback to cdnjs, then unpkg -->
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js" crossorigin="anonymous"></script>
+  <script>
+    // If jsDelivr failed, try cdnjs fallback
+    if (typeof docx === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/index.js" crossorigin="anonymous"><\/script>');
+    }
+  </script>
+  <script>
+    // If both failed, try unpkg as last resort
+    if (typeof docx === 'undefined') {
+      document.write('<script src="https://unpkg.com/docx@8.5.0/build/index.js" crossorigin="anonymous"><\/script>');
+    }
+  </script>
   <style>
     :root {
       --ink: #132524;
@@ -3205,7 +3218,30 @@
 
         setStatus('Generating FP Word file...', 'loading');
         try {
-          if (typeof docx === 'undefined') throw new Error('docx library not loaded. Please check your internet connection.');
+          // If docx wasn't loaded at page-load time, try loading it now dynamically
+          if (typeof docx === 'undefined') {
+            setStatus('Loading docx library...', 'loading');
+            await new Promise((resolve, reject) => {
+              const cdns = [
+                'https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/index.js',
+                'https://unpkg.com/docx@8.5.0/build/index.js'
+              ];
+              let idx = 0;
+              const tryNext = () => {
+                if (idx >= cdns.length) { reject(new Error('Could not load the docx library from any CDN. Please check your internet connection and try again.')); return; }
+                const s = document.createElement('script');
+                s.src = cdns[idx++];
+                s.crossOrigin = 'anonymous';
+                s.onload = () => { if (typeof docx !== 'undefined') resolve(); else tryNext(); };
+                s.onerror = () => tryNext();
+                document.head.appendChild(s);
+              };
+              tryNext();
+            });
+            setStatus('Generating FP Word file...', 'loading');
+          }
+
 
           const g = id => { const el = document.getElementById(id); return el ? el.value : ''; };
 
