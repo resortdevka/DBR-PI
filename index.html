@@ -1031,17 +1031,51 @@
       </div>
       <div class="table-actions"><button class="btn btn-add" data-add="liq">+ Add liquor row</button></div>
     </div>
+    <!-- FINAL BILL (INVOICES) -->
+    <div class="card">
+      <div class="card-head">
+        <h2 class="card-title"><span class="tag">05</span>Final Bill (Invoices)</h2>
+        <span class="card-note">Enter direct bills with invoice number and total amount (e.g. Banquet, F&B, etc.).</span>
+      </div>
+      <div class="table-scroll">
+        <table class="bill" id="tbl_final_bill">
+          <colgroup>
+            <col class="w-date">
+            <col>
+            <col style="width: 160px;">
+            <col class="w-total">
+            <col class="w-del">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Particulars</th>
+              <th>Invoice No.</th>
+              <th style="text-align: right; padding-right: 14px;">Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbl_final_bill_body"></tbody>
+        </table>
+      </div>
+      <div class="table-foot">
+        <span class="label">Final Bill Subtotal</span>
+        <span class="value" id="sub_final_bill">₹0.00</span>
+      </div>
+      <div class="table-actions"><button class="btn btn-add" data-add="finalBill">+ Add invoice row</button></div>
+    </div>
 
     <!-- SUMMARY -->
     <div class="card summary-card">
       <div class="card-head">
-        <h2 class="card-title"><span class="tag">05</span>Final Summary</h2>
+        <h2 class="card-title"><span class="tag">06</span>Final Summary</h2>
       </div>
       <div class="summary-grid">
         <div class="sum-rows">
           <div class="sum-row"><span>Room Charges Subtotal</span><span id="s_room">₹0.00</span></div>
           <div class="sum-row"><span>F&amp;B Subtotal</span><span id="s_fnb">₹0.00</span></div>
           <div class="sum-row"><span>Hard Liquor Subtotal (incl. VAT)</span><span id="s_liq">₹0.00</span></div>
+          <div class="sum-row"><span>Final Bill Subtotal (Invoices)</span><span id="s_final_bill">₹0.00</span></div>
           <div class="sum-row grand"><span>Grand Total</span><span id="s_grand">₹0.00</span></div>
         </div>
         <div class="balance-box settled" id="balanceBox">
@@ -1055,10 +1089,10 @@
       </div>
     </div>
 
-    <!-- 06 FUNCTION PROSPECTUS (FP) DETAILS -->
+    <!-- 07 FUNCTION PROSPECTUS (FP) DETAILS -->
     <div class="card" id="card_fp">
       <div class="card-head">
-        <h2 class="card-title"><span class="tag">06</span>Function Prospectus (FP)</h2>
+        <h2 class="card-title"><span class="tag">07</span>Function Prospectus (FP)</h2>
         <span class="card-note">Fill details to auto-generate the Internal FP document.</span>
       </div>
       
@@ -1512,6 +1546,7 @@
         room.forEach(r => { if (r.particulars && r.particulars.trim()) particularsMemory.add(r.particulars.trim()); });
         fnb.forEach(r => { if (r.particulars && r.particulars.trim()) particularsMemory.add(r.particulars.trim()); });
         liq.forEach(r => { if (r.item && r.item.trim()) particularsMemory.add(r.item.trim()); });
+        finalBill.forEach(r => { if (r.particulars && r.particulars.trim()) particularsMemory.add(r.particulars.trim()); });
         
         const dl = document.getElementById('particulars-list');
         if (dl) {
@@ -1522,10 +1557,11 @@
       }
 
       // ---------- state ----------
-      let room = [], fnb = [], liq = [];
+      let room = [], fnb = [], liq = [], finalBill = [];
 
       function newRoomRow(d) { return Object.assign({ id: uid(), date: getTodayDateString(), particulars: '', pax: '', qty: '', rate: '', base: '', gst: 18 }, d || {}); }
       function newLiqRow(d) { return Object.assign({ id: uid(), date: getTodayDateString(), item: '', qty: '', rate: '', amount: '', vat: 18, remark: '' }, d || {}); }
+      function newFinalBillRow(d) { return Object.assign({ id: uid(), date: getTodayDateString(), particulars: '', invoiceNo: '', total: '' }, d || {}); }
 
       function seed() {
         document.getElementById('g_party').value = '';
@@ -1570,6 +1606,7 @@
         room = [newRoomRow()];
         fnb = [newRoomRow({ qty: 1 })];
         liq = [newLiqRow()];
+        finalBill = [newFinalBillRow()];
       }
 
       function blank() {
@@ -1593,7 +1630,7 @@
         });
         document.getElementById('g_plan').value = 'MAP';
         document.getElementById('g_advance').value = 0;
-        room = [newRoomRow()]; fnb = [newRoomRow()]; liq = [newLiqRow()];
+        room = [newRoomRow()]; fnb = [newRoomRow()]; liq = [newLiqRow()]; finalBill = [newFinalBillRow()];
         renderMenuPreview();
         renderAll();
       }
@@ -1672,23 +1709,35 @@
         </tr>`;
       }
 
+      function finalBillRowHtml(r) {
+        return `<tr data-id="${r.id}">
+          <td><input class="txt" data-f="date" type="date" value="${esc(r.date)}"></td>
+          <td><input class="txt" data-f="particulars" list="particulars-list" value="${esc(r.particulars)}" placeholder="Description"></td>
+          <td><input class="num" data-f="invoiceNo" type="text" value="${esc(r.invoiceNo)}" placeholder="Invoice No."></td>
+          <td><input class="num" data-f="total" type="number" step="0.01" value="${esc(r.total)}" placeholder="0.00"></td>
+          <td class="col-del"><button class="btn-del" data-del="1" title="Remove row">✕</button></td>
+        </tr>`;
+      }
+
       function esc(v) { return (v === undefined || v === null) ? '' : String(v).replace(/"/g, '&quot;'); }
 
       function renderTable(kind) {
-        const body = document.getElementById(kind === 'room' ? 'tbl_room_body' : kind === 'fnb' ? 'tbl_fnb_body' : 'tbl_liq_body');
-        const arr = kind === 'room' ? room : kind === 'fnb' ? fnb : liq;
-        body.innerHTML = arr.map(r => kind === 'liq' ? liqRowHtml(r) : kind === 'fnb' ? fnbRowHtml(r) : roomRowHtml(r)).join('');
+        const body = document.getElementById(kind === 'room' ? 'tbl_room_body' : kind === 'fnb' ? 'tbl_fnb_body' : kind === 'liq' ? 'tbl_liq_body' : 'tbl_final_bill_body');
+        const arr = kind === 'room' ? room : kind === 'fnb' ? fnb : kind === 'liq' ? liq : finalBill;
+        body.innerHTML = arr.map(r => kind === 'liq' ? liqRowHtml(r) : kind === 'fnb' ? fnbRowHtml(r) : kind === 'room' ? roomRowHtml(r) : finalBillRowHtml(r)).join('');
         arr.forEach(r => updateRowComputed(kind, r));
       }
 
       function updateRowComputed(kind, r) {
-        const body = document.getElementById(kind === 'room' ? 'tbl_room_body' : kind === 'fnb' ? 'tbl_fnb_body' : 'tbl_liq_body');
+        const body = document.getElementById(kind === 'room' ? 'tbl_room_body' : kind === 'fnb' ? 'tbl_fnb_body' : kind === 'liq' ? 'tbl_liq_body' : 'tbl_final_bill_body');
         const tr = body.querySelector(`tr[data-id="${r.id}"]`);
         if (!tr) return;
         if (kind === 'liq') {
           const { vatAmt, net } = calcLiqRow(r);
           tr.querySelector('[data-c="vatAmt"]').textContent = fmt(vatAmt);
           tr.querySelector('[data-c="net"]').textContent = fmt(net);
+        } else if (kind === 'finalBill') {
+          // Final bill rows don't have complex calculated cells, total is edited directly
         } else {
           const { gstAmt, total } = calcRoomRow(r);
           tr.querySelector('[data-c="gstAmt"]').textContent = fmt(gstAmt);
@@ -1700,18 +1749,21 @@
         const roomSub = room.reduce((s, r) => s + calcRoomRow(r).total, 0);
         const fnbSub = fnb.reduce((s, r) => s + calcRoomRow(r).total, 0);
         const liqSub = liq.reduce((s, r) => s + calcLiqRow(r).net, 0);
-        return { roomSub, fnbSub, liqSub };
+        const finalBillSub = finalBill.reduce((s, r) => s + num(r.total), 0);
+        return { roomSub, fnbSub, liqSub, finalBillSub };
       }
 
       function renderTotals() {
-        const { roomSub, fnbSub, liqSub } = subtotals();
+        const { roomSub, fnbSub, liqSub, finalBillSub } = subtotals();
         document.getElementById('sub_room').textContent = money(roomSub);
         document.getElementById('sub_fnb').textContent = money(fnbSub);
         document.getElementById('sub_liq').textContent = money(liqSub);
+        document.getElementById('sub_final_bill').textContent = money(finalBillSub);
         document.getElementById('s_room').textContent = money(roomSub);
         document.getElementById('s_fnb').textContent = money(fnbSub);
         document.getElementById('s_liq').textContent = money(liqSub);
-        const grand = roomSub + fnbSub + liqSub;
+        document.getElementById('s_final_bill').textContent = money(finalBillSub);
+        const grand = roomSub + fnbSub + liqSub + finalBillSub;
         document.getElementById('s_grand').textContent = money(grand);
 
         const adv = num(document.getElementById('g_advance').value);
@@ -1725,7 +1777,7 @@
         else { box.classList.add('refund'); lbl.textContent = 'Refund Due to Guest'; val.textContent = money(Math.abs(bal)); }
       }
 
-      function renderAll() { renderTable('room'); renderTable('fnb'); renderTable('liq'); renderTotals(); updateMemoryDatalist(); }
+      function renderAll() { renderTable('room'); renderTable('fnb'); renderTable('liq'); renderTable('finalBill'); renderTotals(); updateMemoryDatalist(); }
 
       // ---------- events ----------
       document.querySelectorAll('.table-scroll').forEach(scroll => {
@@ -1733,8 +1785,8 @@
           const t = e.target;
           const tr = t.closest('tr'); if (!tr) return;
           const table = t.closest('table');
-          const kind = table.id === 'tbl_room' ? 'room' : table.id === 'tbl_fnb' ? 'fnb' : 'liq';
-          const arr = kind === 'room' ? room : kind === 'fnb' ? fnb : liq;
+          const kind = table.id === 'tbl_room' ? 'room' : table.id === 'tbl_fnb' ? 'fnb' : table.id === 'tbl_liq' ? 'liq' : 'finalBill';
+          const arr = kind === 'room' ? room : kind === 'fnb' ? fnb : kind === 'liq' ? liq : finalBill;
           const id = tr.dataset.id;
           const r = arr.find(x => x.id === id); if (!r) return;
           const field = t.dataset.f;
@@ -1768,8 +1820,8 @@
           const chip = e.target.closest('.gst-chip');
           if (chip) {
             const tr = chip.closest('tr'); const table = chip.closest('table');
-            const kind = table.id === 'tbl_room' ? 'room' : table.id === 'tbl_fnb' ? 'fnb' : 'liq';
-            const arr = kind === 'room' ? room : kind === 'fnb' ? fnb : liq;
+            const kind = table.id === 'tbl_room' ? 'room' : table.id === 'tbl_fnb' ? 'fnb' : table.id === 'tbl_liq' ? 'liq' : 'finalBill';
+            const arr = kind === 'room' ? room : kind === 'fnb' ? fnb : kind === 'liq' ? liq : finalBill;
             const r = arr.find(x => x.id === tr.dataset.id);
             const input = tr.querySelector(kind === 'liq' ? '[data-f="vat"]' : '[data-f="gst"]');
             const v = chip.dataset.gst;
@@ -1780,11 +1832,12 @@
           const delBtn = e.target.closest('[data-del]');
           if (delBtn) {
             const tr = delBtn.closest('tr'); const table = delBtn.closest('table');
-            const kind = table.id === 'tbl_room' ? 'room' : table.id === 'tbl_fnb' ? 'fnb' : 'liq';
+            const kind = table.id === 'tbl_room' ? 'room' : table.id === 'tbl_fnb' ? 'fnb' : table.id === 'tbl_liq' ? 'liq' : 'finalBill';
             const id = tr.dataset.id;
             if (kind === 'room') room = room.filter(x => x.id !== id);
             else if (kind === 'fnb') fnb = fnb.filter(x => x.id !== id);
-            else liq = liq.filter(x => x.id !== id);
+            else if (kind === 'liq') liq = liq.filter(x => x.id !== id);
+            else finalBill = finalBill.filter(x => x.id !== id);
             renderTable(kind); renderTotals();
           }
         });
@@ -1795,7 +1848,8 @@
           const kind = btn.dataset.add;
           if (kind === 'room') room.push(newRoomRow());
           else if (kind === 'fnb') fnb.push(newRoomRow({ qty: 1 }));
-          else liq.push(newLiqRow());
+          else if (kind === 'liq') liq.push(newLiqRow());
+          else if (kind === 'finalBill') finalBill.push(newFinalBillRow());
           renderTable(kind); renderTotals();
         });
       });
@@ -1888,9 +1942,11 @@
             },
 
             // Tables
+            // Tables
             room: room.map(r => ({ date: r.date, particulars: r.particulars, pax: r.pax, qty: r.qty, rate: r.rate, base: r.base, gst: r.gst })),
             fnb: fnb.map(r => ({ date: r.date, particulars: r.particulars, pax: r.pax, rate: r.rate, base: r.base, gst: r.gst })),
             liq: liq.map(r => ({ date: r.date, item: r.item, qty: r.qty, rate: r.rate, amount: r.amount, vat: r.vat, remark: r.remark })),
+            finalBill: finalBill.map(r => ({ date: r.date, particulars: r.particulars, invoiceNo: r.invoiceNo, total: r.total })),
 
             // Calculated totals
             totals: subtotals(),
@@ -1950,7 +2006,8 @@
               const rSub = data.totals ? data.totals.roomSub : 0;
               const fSub = data.totals ? data.totals.fnbSub : 0;
               const lSub = data.totals ? data.totals.liqSub : 0;
-              const grand = rSub + fSub + lSub;
+              const fbSub = data.totals ? (data.totals.finalBillSub || 0) : 0;
+              const grand = rSub + fSub + lSub + fbSub;
               
               const isEditingThis = id === currentBillId;
 
@@ -2095,6 +2152,13 @@
               amount: r.amount,
               vat: r.vat,
               remark: r.remark
+            }));
+
+            finalBill = (data.finalBill || []).map(r => newFinalBillRow({
+              date: r.date,
+              particulars: r.particulars,
+              invoiceNo: r.invoiceNo,
+              total: r.total
             }));
             
             renderAll();
@@ -2445,12 +2509,14 @@
         const activeRooms = room.filter(r => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
         const activeFnbs = fnb.filter(r => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
         const activeLiqs = liq.filter(r => (r.item || '').trim() !== '' || num(r.amount) !== 0);
+        const activeFinalBills = finalBill.filter(r => (r.particulars || '').trim() !== '' || num(r.total) !== 0);
 
         let hasRooms = activeRooms.length > 0;
         let hasFnbs = activeFnbs.length > 0;
         let hasLiqs = activeLiqs.length > 0;
+        let hasFinalBills = activeFinalBills.length > 0;
 
-        if (!hasRooms && !hasFnbs && !hasLiqs) {
+        if (!hasRooms && !hasFnbs && !hasLiqs && !hasFinalBills) {
           hasRooms = true; // render Rooms as fallback
         }
 
@@ -2562,6 +2628,97 @@
           row++;
         }
 
+        if (hasFinalBills) {
+          sections.push('D');
+          sectionLabel('FINAL BILL (INVOICES)');
+
+          ws.mergeCells(row, 2, row, 6);
+          ws.mergeCells(row, 7, row, 8);
+          const headers = ['DATE', 'Particulars', '', '', '', '', 'INVOICE NO.', '', 'Total'];
+          headers.forEach((label, i) => {
+            if (i === 2 || i === 3 || i === 4 || i === 5 || i === 7) return;
+            const c = ws.getCell(row, i + 1);
+            c.value = label;
+            c.font = { bold: true, size: 9, name: 'Segoe UI', color: { argb: ink } };
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: gold } };
+            c.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            c.border = border;
+          });
+          for (let col = 1; col <= 9; col++) {
+            const cell = ws.getCell(row, col);
+            cell.border = border;
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: gold } };
+          }
+          ws.getRow(row).height = 24;
+          row++;
+
+          let subTotal = 0;
+          const list = activeFinalBills.length > 0 ? activeFinalBills : [newFinalBillRow()];
+          list.forEach(r => {
+            subTotal += num(r.total);
+
+            const cA = ws.getCell(row, 1);
+            cA.value = formatHeaderDate(r.date);
+            cA.alignment = { vertical: 'middle', horizontal: 'center' };
+            cA.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+            cA.border = border;
+
+            ws.mergeCells(row, 2, row, 6);
+            const cB = ws.getCell(row, 2);
+            cB.value = r.particulars;
+            cB.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+            cB.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+            for (let col = 2; col <= 6; col++) {
+              ws.getCell(row, col).border = border;
+            }
+
+            ws.mergeCells(row, 7, row, 8);
+            const cG = ws.getCell(row, 7);
+            cG.value = r.invoiceNo;
+            cG.alignment = { vertical: 'middle', horizontal: 'center' };
+            cG.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+            ws.getCell(row, 7).border = border;
+            ws.getCell(row, 8).border = border;
+
+            const cI = ws.getCell(row, 9);
+            cI.value = num(r.total) || '';
+            cI.numFmt = '#,##0.00';
+            cI.alignment = { vertical: 'middle', horizontal: 'right' };
+            cI.font = { size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+            cI.border = border;
+
+            ws.getRow(row).height = 20;
+            row++;
+          });
+
+          // Draw subtotal row
+          ws.mergeCells(row, 1, row, 8);
+          const c = ws.getCell(row, 1);
+          c.value = 'TOTAL';
+          c.font = { bold: true, size: 9.5, name: 'Segoe UI', color: { argb: ink } };
+          c.alignment = { horizontal: 'right', vertical: 'middle' };
+
+          const cTotal = ws.getCell(row, 9);
+          cTotal.value = subTotal;
+          cTotal.font = { bold: true, size: 9.5, name: 'Segoe UI', color: { argb: teal } };
+          cTotal.numFmt = '#,##0.00';
+          cTotal.alignment = { horizontal: 'right', vertical: 'middle' };
+
+          const sandFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: sand } };
+          for (let col = 1; col <= 9; col++) {
+            const cell = ws.getCell(row, col);
+            cell.fill = sandFill;
+            cell.border = border;
+          }
+          ws.getRow(row).height = 20;
+          row++;
+
+          grandTotal += subTotal;
+
+          ws.getRow(row).height = 12;
+          row++;
+        }
+
         // --- 4. Render Combined Total Row ---
         const totalLabel = `TOTAL (${sections.join('+')})`;
         ws.mergeCells(row, 1, row, 7);
@@ -2638,11 +2795,13 @@
         const activeRooms = room.filter(r => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
         const activeFnbs  = fnb.filter(r  => (r.particulars || '').trim() !== '' || num(r.base) !== 0);
         const activeLiqs  = liq.filter(r  => (r.item || '').trim()        !== '' || num(r.amount) !== 0);
+        const activeFinalBills = finalBill.filter(r => (r.particulars || '').trim() !== '' || num(r.total) !== 0);
 
         let hasRooms = activeRooms.length > 0;
         let hasFnbs  = activeFnbs.length  > 0;
         let hasLiqs  = activeLiqs.length  > 0;
-        if (!hasRooms && !hasFnbs && !hasLiqs) hasRooms = true;
+        let hasFinalBills = activeFinalBills.length > 0;
+        if (!hasRooms && !hasFnbs && !hasLiqs && !hasFinalBills) hasRooms = true;
 
         let sections = [], grandGst = 0, grandTotal = 0, tablesHtml = '';
 
@@ -2746,6 +2905,32 @@
             <td colspan="6" style="text-align:right">TOTAL:</td>
             <td style="text-align:right">${fmt(subVat)}</td>
             <td style="text-align:right">${fmt(subNet)}</td>
+          </tr></tbody></table>`;
+        }
+
+        if (hasFinalBills) {
+          sections.push('D');
+          tablesHtml += `<div class="pdf-section-title">FINAL BILL (INVOICES)</div>
+          <table class="pdf-data-table"><thead><tr>
+            <th style="width:14%">Date</th><th>Particulars</th>
+            <th style="width:20%;text-align:center">Invoice No.</th>
+            <th style="width:20%;text-align:right">Total</th>
+          </tr></thead><tbody>`;
+          const list = activeFinalBills.length > 0 ? activeFinalBills : [newFinalBillRow()];
+          let subTotal = 0;
+          list.forEach(r => {
+            subTotal += num(r.total);
+            tablesHtml += `<tr>
+              <td style="text-align:center">${esc(formatTableDate(r.date))}</td>
+              <td>${esc(r.particulars)}</td>
+              <td style="text-align:center">${esc(r.invoiceNo)}</td>
+              <td style="text-align:right;font-weight:bold">${fmt(num(r.total))}</td>
+            </tr>`;
+          });
+          grandTotal += subTotal;
+          tablesHtml += `<tr class="pdf-subtotal-row">
+            <td colspan="3" style="text-align:right">TOTAL:</td>
+            <td style="text-align:right">${fmt(subTotal)}</td>
           </tr></tbody></table>`;
         }
 
@@ -2884,8 +3069,8 @@
           const partyNameVal  = g('g_party') || 'Guest';
           const pinoVal       = g('g_pino') || 'N/A';
           const billDateVal   = formatHeaderDate(g('g_billdate'));
-          const { roomSub, fnbSub, liqSub } = subtotals();
-          const grandTotalVal = roomSub + fnbSub + liqSub;
+          const { roomSub, fnbSub, liqSub, finalBillSub } = subtotals();
+          const grandTotalVal = roomSub + fnbSub + liqSub + finalBillSub;
           const advVal        = num(g('g_advance'));
           const balVal        = grandTotalVal - advVal;
           const balanceStr    = Math.abs(balVal) < 0.005 ? '*Settled*' : balVal > 0 ? `*Balance Due:* ₹${fmt(balVal)}` : `*Refund Due:* ₹${fmt(Math.abs(balVal))}`;
